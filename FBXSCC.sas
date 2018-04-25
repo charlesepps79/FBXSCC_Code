@@ -1,6 +1,6 @@
 **********************************************************************;
 *** IMPORT NEW CROSS SELL FILES. --------------------------------- ***;
-*** INSTRUCTIONS HERE: R:\Production\MLA\Files for MLA PROCessINg\ ***;
+*** INSTRUCTIONS HERE: R:\Production\MLA\FileS FOR MLA PROCeSSINg\ ***;
 *** XSELL\XSELL TCI DECSION LENDER.txt --------------------------- ***;
 *** CHANGE DATES IN THE LINES IMMEDIATELY BELOW ALONG WITH FILE    ***;
 *** PATHS. FOR THE FILES PATHS, YOU WILL LIKELY NEED TO CREATE A   ***;
@@ -17,14 +17,14 @@ DATA
 	CALL SYMPUT ('_1day','2018-04-01'); /* DAY BEFORE PULL */
 	CALL SYMPUT ('_1month','2018-03-02'); /* 1 MONTH FROM PULL */
 	CALL SYMPUT ('_16month','2016-12-02'); /*16 MONTHS FROM PULL*/
-	CALL SYMPUT('_3year','2015-04-02'); /* 3 YEARS FROM PULL */
-	CALL SYMPUT('_5year','2013-04-02'); /* 5 YEARS FROM PULL */
+	CALL SYMPUT('_3YEAR','2015-04-02'); /* 3 YEARS FROM PULL */
+	CALL SYMPUT('_5YEAR','2013-04-02'); /* 5 YEARS FROM PULL */
 	CALL SYMPUT ('_15month','2017-01-02'); /*15 MONTHS FROM PULL*/
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
 	CALL SYMPUT ('retail_id', 'RetailXS_5.0_2018');
 	CALL SYMPUT ('auTO_id', 'AuTOXS_5.0_2018');
-	CALL SYMPUT ('fb_id', 'FB_5.0_2018CC');
+	CALL SYMPUT ('FB_id', 'FB_5.0_2018CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
 	CALL SYMPUT ('odd_even', 'Odd'); 
@@ -35,22 +35,22 @@ DATA
 	CALL SYMPUT ('fINalexportDROPped', 
 		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_20180402FINAL_V2.txt');
 	CALL SYMPUT ('exportMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20180402_V2.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT fileS TO WEBSITE\FBCC_20180402_V2.txt');
 	CALL SYMPUT ('fINalexportED', 
-		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.csv');
+		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.cSv');
 	CALL SYMPUT ('fINalexportHH', 
 		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.txt');
 RUN;
 
 *** CHECK THAT MACRO VARIABLES WERE ASSIGNED CORRECTLY ----------- ***;
-%PUT "&_15monthsago" "&_5yrdate" "&yesterday";
+%PUT "&_15MONTHSAGO" "&_5yrdate" "&yeSterday";
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\cepps\FBXS\XS_Mail_Pull.xlsx" 
+		"\\mktg-app01\E\ceppS\FBXS\XS_Mail_PULL.xlSx" 
 		DBMS = XLSX OUT = XS REPLACE;
-	RANGE = "XS Mail Pull$A3:0";
+	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
 RUN;
 
@@ -61,65 +61,65 @@ DATA XS2;
 	*** CREATE `SOURCE` VARIABLE AND ASSIGN `LOAN TYPE = AUTO      ***;
 	*** INDIRECT` AS `TCICENTRAL` OR `LOAN TYPE = RETAIL` AS       ***; 
 	*** `TCIRETAIL` ---------------------------------------------- ***;
-	IF 'loan type'n = "AuTO INdirect" THEN SOURCE = "TCICentral";
-	IF 'loan type'n = "Retail" THEN SOURCE = "TCIRetail";
+	IF 'LOAN type'n = "AuTO INdirect" THEN SOURCE = "TCICentral";
+	IF 'LOAN type'n = "Retail" THEN SOURCE = "TCIRetail";
 	IF SOURCE NE "";
 
-	*** SEPERATE `applicant address` VARIABLE INTO `ADR1`, `CITY`, ***; 
-	*** `STATE`, AND `ZIP` VARIABLES WHEN `applicant address` DOES ***; 
+	*** SEPERATE `applicANt addreSS` VARIABLE INTO `ADR1`, `CITY`, ***; 
+	*** `STATE`, AND `ZIP` VARIABLES WHEN `applicANt addreSS` DOES ***; 
 	*** NOT CONTAIN THE STRING "Apt" ----------------------------- ***;
-	IF FIND('applicant address'n, "Apt") = 0 THEN DO;
-		ADR1 = SCAN('applicant address'n, 1, ",");
-		CITY = SCAN('applicant address'n, 2, ",");
-		STATE = SCAN('applicant address'n, 3, ",");
-		ZIP = SCAN('applicant address'n, 4, ",");
+	IF FIND('applicANt addreSS'n, "Apt") = 0 THEN DO;
+		ADR1 = SCAN('applicANt addreSS'n, 1, ",");
+		CITY = SCAN('applicANt addreSS'n, 2, ",");
+		STATE = SCAN('applicANt addreSS'n, 3, ",");
+		ZIP = SCAN('applicANt addreSS'n, 4, ",");
 	END;
 
-	*** SEPERATE `applicant address` VARIABLE INTO `ADR1`, `ADR2`, ***;
-	*** `CITY`, `STATE`, AND `ZIP` VARIABLES WHEN `applicant       ***;
-	*** address` CONTAINS THE STRING "Apt" ----------------------- ***;
-	IF FIND('applicant address'n, "Apt") GE 1 THEN DO;
-		ADR1 = SCAN('applicant address'n, 1, ",");
-		ADR2 = SCAN('applicant address'n, 2, ",");
-		CITY = SCAN('applicant address'n, 3, ",");
-		STATE = SCAN('applicant address'n, 4, ",");
-		ZIP = SCAN('applicant address'n, 5, ",");
+	*** SEPERATE `applicANt addreSS` VARIABLE INTO `ADR1`, `ADR2`, ***;
+	*** `CITY`, `STATE`, AND `ZIP` VARIABLES WHEN `applicANt       ***;
+	*** addreSS` CONTAINS THE STRING "Apt" ----------------------- ***;
+	IF FIND('applicANt addreSS'n, "Apt") GE 1 THEN DO;
+		ADR1 = SCAN('applicANt addreSS'n, 1, ",");
+		ADR2 = SCAN('applicANt addreSS'n, 2, ",");
+		CITY = SCAN('applicANt addreSS'n, 3, ",");
+		STATE = SCAN('applicANt addreSS'n, 4, ",");
+		ZIP = SCAN('applicANt addreSS'n, 5, ",");
 	END;
 
-	*** FORMAT `applicant DOB` AS YYMMDD10 AND STORE IN `DOB`      ***;
+	*** FORMAT `applicANt DOB` AS YYMMDD10 AND STORE IN `DOB`      ***;
 	*** VARIABLE. ------------------------------------------------ ***;
-	DOB = PUT('applicant DOB'n, YYMMDD10.);
+	DOB = PUT('applicANt DOB'n, YYMMDD10.);
 
 	*** FORMAT `application date` AS MMDDYY10 -------------------- ***;
 	'application date1'n = PUT('application date'n, MMDDYY10.);
 
-	*** CONCATENATE "TCI" TO `Application Number` AND STORE AS     ***;
+	*** CONCATENATE "TCI" TO `Application NUMBER` AND STORE AS     ***;
 	*** `BRACCTNO` VARIABLE -------------------------------------- ***;
-	BRACCTNO = CATS("TCI", 'Application Number'n);
+	BRACCTNO = CATS("TCI", 'Application NUMBER'n);
 
-	*** SUB-STRING THE LAST 7 DIGITS FROM THE `applicant ssn`      ***;
+	*** SUB-STRING THE LAST 7 DIGITS FROM THE `applicANt SSn`      ***;
 	*** VARIABLE AND STORE THEM IN `SSNO1_RT7` VARIABLE ---------- ***;
-	SSNO1_RT7 = SUBSTRN('applicant ssn'n, MAX(1, 
-		LENGTH('applicant ssn'n) - 6), 7);
+	SSNO1_RT7 = SUBSTRN('applicANt SSn'n, MAX(1, 
+		LENGTH('applicANt SSn'n) - 6), 7);
 
-	*** DROP THE VARIABLES `Application Date`, `Applicant Address`,***;
-	*** `Applicant Address ZIP`, `Applicant DOB`, `app. work phoNE`***;
+	*** DROP THE VARIABLES `Application Date`, `ApplicANt AddreSS`,***;
+	*** `ApplicANt AddreSS ZIP`, `ApplicANt DOB`, `app. work phoNE`***;
 	*** FROM NEWXS2 DATASET -------------------------------------- ***;
-	DROP 'Application Date'n 'Applicant Address'n
-		'Applicant Address ZIP'n 'Applicant DOB'n 'app. work phoNE'n;
+	DROP 'Application Date'n 'ApplicANt AddreSS'n
+		'ApplicANt AddreSS ZIP'n 'ApplicANt DOB'n 'app. work phoNE'n;
 
-	*** RENAME THE `application date1`, `applicant email`,         ***;
-	*** `Applicant Credit Score`, `Applicant FIRST Name`,          ***;
-	*** `Applicant LAST Name`, `Applicant SSN`, `Applicant Middle  ***;
+	*** RENAME THE `application date1`, `applicANt email`,         ***;
+	*** `ApplicANt Credit Score`, `ApplicANt FIRST Name`,          ***;
+	*** `ApplicANt LAST Name`, `ApplicANt SSN`, `ApplicANt Middle  ***;
 	*** Name`, `app. cell phoNE`, AND `app. home phoNE` VARIABLES  ***;
 	RENAME 
 		'application date1'n = 'application date'n
-		'applicant email'n = EMAIL 
-		'Applicant Credit Score'n = CRSCORE
-		'Applicant FIRST Name'n = FIRSTNAME
-		'Applicant LAST Name'n = LASTNAME 
-		'Applicant SSN'n = SSNO1
-		'Applicant Middle Name'n = MIDDLENAME 
+		'applicANt email'n = EMAIL 
+		'ApplicANt Credit Score'n = CRSCORE
+		'ApplicANt FIRST Name'n = FIRSTNAME
+		'ApplicANt LAST Name'n = LASTNAME 
+		'ApplicANt SSN'n = SSNO1
+		'ApplicANt Middle Name'n = MIDDLENAME 
 		'app. cell phoNE'n = CELLPHONE 
 		'app. home phoNE'n = PHONE;
 RUN;
@@ -174,7 +174,7 @@ DATA XS_L;
 	SS7BRSTATE = CATS(SSNO1_RT7, SUBSTR(OWNBR, 1, 2)); 
 RUN;
 
-*** READ IN DATA FROM `dw.vw_BORROWER_nls` TABLE. SUBSET FOR       ***;
+*** READ IN DATA FROM `dw.vw_BORROWER_nlS` TABLE. SUBSET FOR       ***;
 *** RELEVANT VARIABLES. FILTER TO ISOLATE XS LOANS. STORE AS       ***; 
 *** `BORRNLS` DATASET -------------------------------------------- ***;
 DATA BORRNLS;
@@ -182,8 +182,8 @@ DATA BORRNLS;
 	*** SET LENGTH FOR `FIRSTNAME`, `MIDDLENAME`, `LASTNAME` ----- ***;
 	LENGTH FIRSTNAME $20 MIDDLENAME $20 LASTNAME $30;
 
-	*** SUBSET `dw.vw_BORROWER_nls` USING RELEVANT VARIABLES ----- ***;
-	SET dw.vw_BORROWER_nls (
+	*** SUBSET `dw.vw_BORROWER_nlS` USING RELEVANT VARIABLES ----- ***;
+	SET dw.vw_BORROWER_nlS (
 		KEEP = RMC_UPDATED PHONE CELLPHONE CIFNO SSNO SSNO_RT7  FNAME 
 			LNAME ADR1 ADR2 CITY STATE ZIP BRNO AGE CONFIDENTIAL
 			SOLICIT CEASEANDDESIST CREDITSCORE);
@@ -384,7 +384,7 @@ RUN;
 
 *** STEP 1: PULL IN DATA FOR `FB`S ------------------------------- ***;
 DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
-	SET dw.vw_loan_nls (
+	SET dw.vw_loan_nlS (
 		KEEP = PURCD CIFNO BRACCTNO ID OWNBR OWNST SSNO1_RT7 SSNO1
 			   SSNO2 NETLOANAMOUNT LNAMT FINCHG SSNO1_RT7 LOANTYPE
 			   ENTDATE LOANDATE CLASSID CLASSTRANSLATION
@@ -435,7 +435,7 @@ RUN;
 *** PULL IN INFORMATION FOR STATFLAGS ---------------------------  ***;
 DATA STATFLAGS;
 	SET dw.vw_loan(KEEP = OWNBR SSNO1_RT7 ENTDATE STATFLAGS);
-	WHERE ENTDATE > "&_3year" & 
+	WHERE ENTDATE > "&_3YEAR" & 
 		  STATFLAGS NE "";
 RUN;
 
@@ -482,7 +482,7 @@ RUN;
 DATA BK5YRDROPS;
 	SET dw.vw_loan (
 		KEEP = ENTDATE SSNO1_RT7 OWNBR BNKRPTDATE BNKRPTCHAPTER);
-	WHERE ENTDATE > "&_5year";
+	WHERE ENTDATE > "&_5YEAR";
 RUN;
 DATA BK5YRDROPS;
 	SET BK5YRDROPS;
@@ -639,7 +639,7 @@ DATA MERGED_L_B2; /* MERGE PULL WITH CON5 FLAGS */
 	IF x;
 RUN;
 
-*** IdentIFy IF cusTOmer currently has an open loan for FB ------- ***;
+*** IDENTIFY IF CUSTOMER CURRENTLY HAS AN OPEN LOAN FOR FB ------- ***;
 DATA OPENLOANS;
 	SET dw.vw_loan(
 		KEEP = SSNO2 SSNO1_RT7 POCD PLCD POFFDATE PLDATE BNKRPTDATE);
@@ -713,6 +713,7 @@ DATA OPENLOANS1XS;
 	OPEN_FLAG = "X";
 	DROP POCD PLCD POFFDATE PLDATE BNKRPTDATE SSNO2;
 RUN;
+
 PROC SORT 
 	DATA = OPENLOANS1XS NODUPKEY;
 	BY SSNO1_RT7;
@@ -920,150 +921,192 @@ DATA MERGED_L_B2;
 	IF _30 > 3 | _60 > 1 | _90PLUS > 0 | _60_RECENT6 > 0 | 
 	   _30_RECENT3 > 1 | _30_RECENT6 > 2 
 		THEN CONPROFILE_FLAG = "X";
-	_9s = COUNTC(CONPROFILE1, "9");
-	IF _9s > 10 THEN LESSTHAN2_FLAG = "X";
-	XNO_TRUEDUEDATE2 = INput(SUBSTR(XNO_TrueDueDate,6,2)||'/'||SUBSTR(XNO_TrueDueDate,9,2)||'/'||SUBSTR(XNO_TrueDueDate,1,4),mmddyy10.);
-FIRSTPyDate2=INput(SUBSTR(FIRSTPyDate,6,2)||'/'||SUBSTR(FIRSTPyDate,9,2)||'/'||SUBSTR(FIRSTPyDate,1,4),mmddyy10.);
-Pmt_days=XNO_TRUEDUEDATE2-FIRSTPyDate2;
-IF pmt_days<60 THEN LESSTHAN2_FLAG="X";
-IF pmt_days = . & _9s <10 THEN LESSTHAN2_FLAG="";
-IF pmt_days>=60 & _9s >=10 THEN LESSTHAN2_FLAG="";
-IF PlAmt>0 THEN PlAmt_FLAG="X";
-IF CAMP_TYPE="FB" THEN do;
-IF ownst NE STATE THEN STATE_Mismatch_FLAG = "X"; *FLAG NONMATCHING BRANCH STATE AND BORROWER STATE;
-LESSTHAN2_FLAG=""; *Make sure FB FLAG is SET TO NULL;
-end;
-IF purcd IN ("011","020") THEN dlqren_FLAG="X";
-IF brno = "0251" THEN brno="0580";
-IF brno = "0252" THEN brno="0683";
-IF brno = "0253" THEN brno="0581";
-IF brno = "0254" THEN brno="0582";
-IF brno = "0255" THEN brno="0583";
-IF brno = "0256" THEN brno="1103";
-IF brno = "0302" THEN brno="0133";
-/*IF brno = "1019" THEN brno="1004";*/
-IF brno = "1016" THEN brno="1008";
-IF brno = "0877" THEN brno="0806";
-IF brno = "0159" THEN brno="0132";
-IF brno = "0152" THEN brno="0115";
-IF brno = "0885" THEN brno="0802";
-IF ZIP=:"29659" & brno="0152" THEN brno="0121";
-IF ZIP=:"36264" & brno="0877" THEN brno="0870";
-IF brno = "1003" AND ZIP=:"87112" THEN brno="1013";
-IF brno = "0872" THEN brno="0807";
-IF brno = "0102" THEN brno="0303";
+	_9S = COUNTC(CONPROFILE1, "9");
+	IF _9S > 10 THEN LESSTHAN2_FLAG = "X";
+	XNO_TRUEDUEDATE2 = INPUT(SUBSTR(XNO_TRUEDUEDATE, 6, 2) || '/' || 
+							 SUBSTR(XNO_TRUEDUEDATE, 9, 2) || '/' || 
+							 SUBSTR(XNO_TRUEDUEDATE, 1, 4), mmddyy10.);
+	FIRSTPYDATE2 = INPUT(SUBSTR(FIRSTPYDATE, 6, 2) || '/' || 
+						 SUBSTR(FIRSTPYDATE, 9, 2) || '/' ||
+						 SUBSTR(FIRSTPYDATE, 1, 4), mmddyy10.);
+	PMT_DAYS = XNO_TRUEDUEDATE2 - FIRSTPYDATE2;
+	IF PMT_DAYS < 60 THEN LESSTHAN2_FLAG = "X";
+	IF PMT_DAYS = . & _9S < 10 THEN LESSTHAN2_FLAG = "";
+	IF PMT_DAYS >= 60 & _9S >= 10 THEN LESSTHAN2_FLAG = "";
+	IF PLAMT > 0 THEN PLAMT_FLAG = "X";
+
+	IF CAMP_TYPE = "FB" THEN DO;
+		
+		*** FLAG NONMATCHING BRANCH STATE AND BORROWER STATE ----- ***;
+		IF OWNST NE STATE THEN STATE_MISMATCH_FLAG = "X";
+		LESSTHAN2_FLAG = ""; /*MAKE SURE FB FLAG IS SET TO NULL */
+	END;
+
+	IF PURCD IN ("011", "020") THEN DLQREN_FLAG = "X";
+	IF BRNO = "0251" THEN BRNO = "0580";
+	IF BRNO = "0252" THEN BRNO = "0683";
+	IF BRNO = "0253" THEN BRNO = "0581";
+	IF BRNO = "0254" THEN BRNO = "0582";
+	IF BRNO = "0255" THEN BRNO = "0583";
+	IF BRNO = "0256" THEN BRNO = "1103";
+	IF BRNO = "0302" THEN BRNO = "0133";
+ /* IF BRNO = "1019" THEN BRNO = "1004"; */
+	IF BRNO = "1016" THEN BRNO = "1008";
+	IF BRNO = "0877" THEN BRNO = "0806";
+	IF BRNO = "0159" THEN BRNO = "0132";
+	IF BRNO = "0152" THEN BRNO = "0115";
+	IF BRNO = "0885" THEN BRNO = "0802";
+	IF ZIP =: "29659" & BRNO = "0152" THEN BRNO = "0121";
+	IF ZIP =: "36264" & BRNO = "0877" THEN BRNO = "0870";
+	IF BRNO = "1003" AND ZIP =: "87112" THEN BRNO = "1013";
+	IF BRNO = "0872" THEN BRNO = "0807";
+	IF BRNO = "0102" THEN BRNO = "0303";
 RUN;
 
-
-
-
-*pull AND MERGE dlq INFO for fb's;
-PROC format;
-   value cdfmt
-   1 = 'Current'
-   2 = '1-29cd'
-   3 = '30-59cd'
-   4 = '60-89cd'
-   5 = '90-119cd'
-   6 = '120-149cd'
-   7 = '150-179cd'
-   8 = '180+cd'
-   other=' ';
+*** PULL AND MERGE DLQ INFO FOR FB'S ----------------------------- ***;
+PROC FORMAT;
+	VALUE CDFMT 1 = 'Current' 
+				2 = '1-29CD'
+				3 = '30-59CD'
+				4 = '60-89CD'
+				5 = '90-119CD'
+				6 = '120-149CD'
+				7 = '150-179CD'
+				8 = '180+CD'
+				OTHER = ' ';
 RUN;
-DATA temp;   
-   SET dw.vw_loan(KEEP=bracctno srcd ENTDATE POFFDATE POCD CLASSTRANSLATION lnamt CONPROFILE1 
-                       brtrffg SSNO1_RT7 WHERE=(POCD='13' AND POFFDATE > "&_15month"));
-   entdt = INput(SUBSTR(ENTDATE,6,2)||'/'||SUBSTR(ENTDATE,9,2)||'/'||SUBSTR(ENTDATE,1,4),mmddyy10.);
-   podt = INput(SUBSTR(POFFDATE,6,2)||'/'||SUBSTR(POFFDATE,9,2)||'/'||SUBSTR(POFFDATE,1,4),mmddyy10.);
-   IF POFFDATE > "&_1day" THEN delete; 													
-   IF put(entdt,yymmn6.) = put(podt,yymmn6.) THEN delete;    
-   DROP POFFDATE ENTDATE POCD srcd;
+
+DATA TEMP;
+	SET dw.vw_loan(
+		KEEP = BRACCTNO SRCD ENTDATE POFFDATE POCD CLASSTRANSLATION
+			   LNAMT CONPROFILE1 BRTRFFG SSNO1_RT7 
+		WHERE = (POCD = '13' AND POFFDATE > "&_15month"));
+	ENTDT = INPUT(SUBSTR(ENTDATE, 6, 2) || '/' || 
+				  SUBSTR(ENTDATE, 9, 2) || '/' ||
+				  SUBSTR(ENTDATE, 1, 4), mmddyy10.);
+	PODT = INPUT(SUBSTR(POFFDATE, 6, 2) || '/' ||
+				 SUBSTR(POFFDATE, 9, 2) || '/' ||
+				 SUBSTR(POFFDATE, 1, 4), mmddyy10.);
+	IF POFFDATE > "&_1day" THEN DELETE;
+	IF PUT(ENTDT, yymmn6.) = PUT(PODT, yymmn6.) THEN DELETE;
+	DROP POFFDATE ENTDATE POCD SRCD;
 RUN; 
-PROC SORT NODUPKEY; BY bracctno; RUN;
-DATA atb;
-   SET dw.atb_DATA(KEEP=bracctno age2 yearmonth);    
-   poacctno = bracctno*1;   
-   atbdt = INput(SUBSTR(yearmonth,6,2)||'/'||SUBSTR(yearmonth,9,2)||'/'||SUBSTR(yearmonth,1,4),mmddyy10.);   
-   IF age2 =: '1' THEN age2 = '1.Current';   
-   KEEP atbdt age2 bracctno;
-RUN;
-PROC SORT NODUPKEY; BY bracctno atbdt; RUN;
-DATA temp;     
-   MERGE temp(IN=a) atb(IN=b);
-   BY bracctno;
-   IF a;  
-   cd = SUBSTR(age2,1,1)*1;   
-   age = INtck('month',atbdt,podt); 
-   IF      age = 1 THEN delq1 = cd;
-   ELSE IF age = 2 THEN delq2 = cd;
-   ELSE IF age = 3 THEN delq3 = cd;
-   ELSE IF age = 4 THEN delq4 = cd;
-   ELSE IF age = 5 THEN delq5 = cd;
-   ELSE IF age = 6 THEN delq6 = cd;
-   ELSE IF age = 7 THEN delq7 = cd;
-   ELSE IF age = 8 THEN delq8 = cd;
-   ELSE IF age = 9 THEN delq9 = cd;
-   ELSE IF age =10 THEN delq10= cd;
-   ELSE IF age =11 THEN delq11= cd;
-   ELSE IF age =12 THEN delq12= cd;
-   ELSE delete;
-    IF cd>3 THEN cd60 = 1; *IF cd is greater than 30-59 days late, SET cd60 TO 1;
-   IF cd>2 THEN cd30 = 1; *IF cd is greater than 1-29 days late, SET cd30 TO 1;
-      IF age<4 THEN do;
-		IF cd>2 THEN RECENT3=1; *NOTe 30-59s IN LAST six months;
-		end;
-		ELSE IF 3<age<7 THEN do;
-		IF cd>2 THEN RECENT4TO6=1; *NOTe 30-59s from 7 TO 12 months ago;
-		end;
-   IF age<7 THEN do;
-		IF cd>2 THEN RECENT6=1; *NOTe 30-59s IN LAST six months;
-		IF cd>3 THEN RECENT6_60=1;
-		end;
-		ELSE IF 6<age<13 THEN do;
-		IF cd>2 THEN FIRST6=1; *NOTe 30-59s from 7 TO 12 months ago;
-		IF cd>3 THEN FIRST6_60=1;
-		end;
-		KEEP CLASSTRANSLATION bracctno delq1-delq12 cd cd30 cd60 age2 atbdt age RECENT3 RECENT4TO6 RECENT6_60 FIRST6_60 FIRST6 RECENT6;
-RUN;
-DATA temp2;
-SET temp;
-LAST12=SUM(RECENT6,FIRST6); *count the number OF 30-59s IN the LAST year when fb had open loan;
-LAST12_60=SUM(RECENT6_60,FIRST6_60);
-RUN;
-PROC SUMmary DATA=temp2 nway missINg;
-   class CLASSTRANSLATION bracctno;
-   var delq1-delq12 RECENT6 LAST12 FIRST6 RECENT6_60 LAST12_60 FIRST6_60 RECENT3 RECENT4TO6 cd60 cd30;
-   OUTPUT out=fINalfb(DROP=_type_ _freq_) SUM=;
-RUN; 
-DATA fbdlq;
-   SET fINalfb;
-   times30 = cd30;
-   IF times30 = . THEN times30 = 0;
-   IF RECENT6 = . THEN RECENT6=0;
-   IF FIRST6 = . THEN FIRST6=0;
-   IF LAST12 = . THEN LAST12=0;
-   IF RECENT6_60= . THEN RECENT6_60=0;
-   IF FIRST6_60 = . THEN FIRST6_60=0;
-   IF LAST12_60 = . THEN LAST12_60=0;
-   IF RECENT3 = . THEN RECENT3 = 0;
-   IF RECENT4TO6=. THEN RECENT4TO6=0;
-   DROP cd30;
-   format delq1-delq12 cdfmt.;
+
+PROC SORT 
+	NODUPKEY; 
+	BY BRACCTNO; 
 RUN;
 
-PROC SORT DATA=fbdlq NODUPKEY;
- BY BrAcctNo;
+DATA ATB;
+	SET dw.ATB_DATA(
+		KEEP = BRACCTNO AGE2 YEARMONTH);
+	POACCTNO = BRACCTNO * 1;
+	ATBDT = INPUT(SUBSTR(YEARMONTH, 6, 2) || '/' ||
+				  SUBSTR(YEARMONTH, 9, 2) || '/' ||
+				  SUBSTR(YEARMONTH, 1, 4), mmddyy10.);
+	IF AGE2 =: '1' THEN AGE2 = '1.Current';
+	KEEP ATBDT AGE2 BRACCTNO;
+RUN;
+
+PROC SORT 
+	NODUPKEY; 
+	BY BRACCTNO ATBDT; 
+RUN;
+
+DATA TEMP;
+	MERGE TEMP(IN = a) ATB(IN = b);
+	BY BRACCTNO;
+	IF a;
+	CD = SUBSTR(AGE2, 1, 1) * 1;
+	AGE = INTCK('month', ATBDT, PODT);
+	IF AGE = 1 THEN DELQ1 = CD;
+	ELSE IF AGE = 2 THEN DELQ2 = CD;
+	ELSE IF AGE = 3 THEN DELQ3 = CD;
+	ELSE IF AGE = 4 THEN DELQ4 = CD;
+	ELSE IF AGE = 5 THEN DELQ5 = CD;
+	ELSE IF AGE = 6 THEN DELQ6 = CD;
+	ELSE IF AGE = 7 THEN DELQ7 = CD;
+	ELSE IF AGE = 8 THEN DELQ8 = CD;
+	ELSE IF AGE = 9 THEN DELQ9 = CD;
+	ELSE IF AGE =10 THEN DELQ10 = CD;
+	ELSE IF AGE =11 THEN DELQ11 = CD;
+	ELSE IF AGE =12 THEN DELQ12 = CD;
+	ELSE DELETE;
+	
+	*** IF CD IS GREATER THAN 30-59 DAYS LATE, SET CD60 TO 1 ----- ***;
+	IF CD > 3 THEN CD60 = 1;
+
+	*** IF CD IS GREATER THAN 1-29 DAYS LATE, SET CD30 TO 1 ------ ***;
+	IF CD > 2 THEN CD30 = 1;
+
+	IF AGE < 4 THEN DO;
+		IF CD > 2 THEN RECENT3 = 1; /* 30-59S IN LAST 6 MONTHS */
+	END;
+
+	ELSE IF 3 < AGE < 7 THEN DO;
+		IF CD > 2 THEN RECENT4TO6 = 1; /* 30-59S 7 TO 12 MONTHS AGO */
+	END;
+
+	IF AGE < 7 THEN DO;
+		IF CD > 2 THEN RECENT6 = 1; /* 30-59S IN LAST 6 MONTHS */
+		IF CD > 3 THEN RECENT6_60 = 1;
+	END;
+
+	ELSE IF 6 < AGE < 13 THEN DO;
+		IF CD > 2 THEN FIRST6 = 1; /* 30-59S 7 TO 12 MONTHS AGO */
+		IF CD > 3 THEN FIRST6_60 = 1;
+	END;
+
+	KEEP CLASSTRANSLATION BRACCTNO DELQ1-DELQ12 CD CD30 CD60 AGE2 ATBDT
+		 AGE RECENT3 RECENT4TO6 RECENT6_60 FIRST6_60 FIRST6 RECENT6;
+RUN;
+
+DATA TEMP2;
+	SET TEMP;
+	
+	*** COUNT THE NUMBER OF 30-59S IN THE LAST YEAR WHEN FB HAD    ***;
+	*** OPEN LOAN ------------------------------------------------ ***;
+	LAST12 = SUM(RECENT6, FIRST6);
+	LAST12_60 = SUM(RECENT6_60, FIRST6_60);
+RUN;
+
+PROC SUMMARY 
+	DATA = TEMP2 NWAY MISSING;
+	CLASS CLASSTRANSLATION BRACCTNO;
+	VAR DELQ1-DELQ12 RECENT6 LAST12 FIRST6 RECENT6_60 LAST12_60
+		FIRST6_60 RECENT3 RECENT4TO6 CD60 CD30;
+	OUTPUT OUT = FINALFB(DROP = _type_ _freq_) SUM = ;
+RUN; 
+
+DATA FBDLQ;
+	SET FINALFB;
+	TIMES30 = CD30;
+	IF TIMES30 = . THEN TIMES30 = 0;
+	IF RECENT6 = . THEN RECENT6 = 0;
+	IF FIRST6 = . THEN FIRST6 = 0;
+	IF LAST12 = . THEN LAST12 = 0;
+	IF RECENT6_60 = . THEN RECENT6_60 = 0;
+	IF FIRST6_60 = . THEN FIRST6_60 = 0;
+	IF LAST12_60 = . THEN LAST12_60 = 0;
+	IF RECENT3 = . THEN RECENT3 = 0;
+	IF RECENT4TO6 = . THEN RECENT4TO6 = 0;
+	DROP CD30;
+	FORMAT DELQ1-DELQ12 CDFMT.;
+RUN;
+
+PROC SORT DATA=FBDLQ NODUPKEY;
+ BY BRACCTNO;
  RUN;
- DATA fb;
+ DATA FB;
  SET MERGED_L_B2;
  IF CAMP_TYPE="FB";
  RUN;
-PROC SORT DATA=fb; *SORT TO MERGE;
-BY BrAcctNo;
+PROC SORT DATA=FB; *SORT TO MERGE;
+BY BRACCTNO;
 RUN;
-DATA fbwithdlq; *MERGE pull AND dql INFOrmation;
-MERGE fb(IN=x) fbdlq(IN=y);
-BY bracctno;
+DATA FBwithDLQ; *MERGE PULL AND dql INFORMATion;
+MERGE FB(IN=x) FBDLQ(IN=y);
+BY BRACCTNO;
 IF x=1;
 RUN;
 
@@ -1072,58 +1115,58 @@ RUN;
 *****************************************;
 
 
-*Step 14:  pull AND MERGE dlq INFO for xs's;
-DATA atb; 
-   SET dw.atb_DATA(KEEP=bracctno age2 yearmonth WHERE=(yearmonth between "&_16month" AND "&_1day"));   
-   atbdt = INput(SUBSTR(yearmonth,6,2)||'/'||SUBSTR(yearmonth,9,2)||'/'||SUBSTR(yearmonth,1,4),mmddyy10.);     
-   age = INtck('month',atbdt,"&sysdate"d);
-cd = SUBSTR(age2,1,1)*1;   
- *i.e. for age=1: this is most RECENT month. Fill delq1, which is delq for month 1, with delq status (cd);
-   IF      age = 1 THEN delq1 = cd;
-   ELSE IF age = 2 THEN delq2 = cd;
-   ELSE IF age = 3 THEN delq3 = cd;
-   ELSE IF age = 4 THEN delq4 = cd;
-   ELSE IF age = 5 THEN delq5 = cd;
-   ELSE IF age = 6 THEN delq6 = cd;
-   ELSE IF age = 7 THEN delq7 = cd;
-   ELSE IF age = 8 THEN delq8 = cd;
-   ELSE IF age = 9 THEN delq9 = cd;
-   ELSE IF age =10 THEN delq10= cd;
-   ELSE IF age =11 THEN delq11= cd;
-   ELSE IF age =12 THEN delq12= cd;
-   IF cd>3 THEN cd60 = 1; *IF cd is greater than 30-59 days late, SET cd60 TO 1;
-   IF cd>2 THEN cd30 = 1; *IF cd is greater than 1-29 days late, SET cd30 TO 1;
-      IF age<4 THEN do;
-		IF cd>2 THEN RECENT3=1; *NOTe 30-59s IN LAST six months;
-		end;
-		ELSE IF 3<age<7 THEN do;
-		IF cd>2 THEN RECENT4TO6=1; *NOTe 30-59s from 7 TO 12 months ago;
-		end;
-   IF age<7 THEN do;
-		IF cd>2 THEN RECENT6=1; *NOTe 30-59s IN LAST six months;
-		IF cd>3 THEN RECENT6_60=1;
-		end;
-		ELSE IF 6<age<13 THEN do;
-		IF cd>2 THEN FIRST6=1; *NOTe 30-59s from 7 TO 12 months ago;
-		IF cd>3 THEN FIRST6_60=1;
-		end;
-		KEEP bracctno delq1-delq12 cd cd30 cd60 age2 atbdt age RECENT3 RECENT4TO6 RECENT6_60 FIRST6_60 FIRST6 RECENT6;
+*Step 14:  PULL AND MERGE DLQ INFO FOR xS'S;
+DATA ATB; 
+   SET dw.ATB_DATA(KEEP=BRACCTNO AGE2 YEARMONTH WHERE=(YEARMONTH between "&_16month" AND "&_1day"));   
+   ATBDT = INPUT(SUBSTR(YEARMONTH,6,2)||'/'||SUBSTR(YEARMONTH,9,2)||'/'||SUBSTR(YEARMONTH,1,4),mmddyy10.);     
+   AGE = INTCK('month',ATBDT,"&SySdate"d);
+CD = SUBSTR(AGE2,1,1)*1;   
+ *i.e. FOR AGE=1: thIS IS moSt RECENT month. Fill DELQ1, which IS DELQ FOR month 1, with DELQ StatuS (CD);
+   IF      AGE = 1 THEN DELQ1 = CD;
+   ELSE IF AGE = 2 THEN DELQ2 = CD;
+   ELSE IF AGE = 3 THEN DELQ3 = CD;
+   ELSE IF AGE = 4 THEN DELQ4 = CD;
+   ELSE IF AGE = 5 THEN DELQ5 = CD;
+   ELSE IF AGE = 6 THEN DELQ6 = CD;
+   ELSE IF AGE = 7 THEN DELQ7 = CD;
+   ELSE IF AGE = 8 THEN DELQ8 = CD;
+   ELSE IF AGE = 9 THEN DELQ9 = CD;
+   ELSE IF AGE =10 THEN DELQ10= CD;
+   ELSE IF AGE =11 THEN DELQ11= CD;
+   ELSE IF AGE =12 THEN DELQ12= CD;
+   IF CD>3 THEN CD60 = 1; *IF CD IS GREATER THAN 30-59 DAYS LATE, SET CD60 TO 1;
+   IF CD>2 THEN CD30 = 1; *IF CD IS GREATER THAN 1-29 DAYS LATE, SET CD30 TO 1;
+      IF AGE<4 THEN DO;
+		IF CD>2 THEN RECENT3=1; *NOTE 30-59S IN LAST Six MONTHS;
+		END;
+		ELSE IF 3<AGE<7 THEN DO;
+		IF CD>2 THEN RECENT4TO6=1; *NOTE 30-59S from 7 TO 12 MONTHS AGO;
+		END;
+   IF AGE<7 THEN DO;
+		IF CD>2 THEN RECENT6=1; *NOTE 30-59S IN LAST Six MONTHS;
+		IF CD>3 THEN RECENT6_60=1;
+		END;
+		ELSE IF 6<AGE<13 THEN DO;
+		IF CD>2 THEN FIRST6=1; *NOTE 30-59S from 7 TO 12 MONTHS AGO;
+		IF CD>3 THEN FIRST6_60=1;
+		END;
+		KEEP BRACCTNO DELQ1-DELQ12 CD CD30 CD60 AGE2 ATBDT AGE RECENT3 RECENT4TO6 RECENT6_60 FIRST6_60 FIRST6 RECENT6;
 RUN;
-DATA atb2;
-SET atb;
-LAST12=SUM(RECENT6,FIRST6); *count the number OF 30-59s IN the LAST year;
+DATA ATB2;
+SET ATB;
+LAST12=SUM(RECENT6,FIRST6); *COUNT THE NUMBER OF 30-59S IN THE LAST YEAR;
 LAST12_60=SUM(RECENT6_60,FIRST6_60);
 RUN;
-*count cd30, cd60,RECENT6,FIRST6 BY bracctno (*recall loan potentially counted for each month);
-PROC SUMmary DATA=atb2 nway missINg;
-   class bracctno;
-   var delq1-delq12 RECENT6 LAST12 FIRST6 RECENT6_60 LAST12_60 FIRST6_60 RECENT3 RECENT4TO6 cd60 cd30;
-   OUTPUT out=fINalxs(DROP=_type_ _freq_) SUM=;
+*COUNT CD30, CD60,RECENT6,FIRST6 BY BRACCTNO (*recall LOAN potentially COUNTed FOR each month);
+PROC SUMMARY DATA=ATB2 NWAY MISSING;
+   CLASS BRACCTNO;
+   VAR DELQ1-DELQ12 RECENT6 LAST12 FIRST6 RECENT6_60 LAST12_60 FIRST6_60 RECENT3 RECENT4TO6 CD60 CD30;
+   OUTPUT OUT=fINalxS(DROP=_type_ _freq_) SUM=;
 RUN; 
-DATA atb4; *create NEw counter variables;
-   SET fINalxs;
-   times30 = cd30;
-   IF times30 = . THEN times30 = 0;
+DATA ATB4; *create NEw COUNTer VARiableS;
+   SET fINalxS;
+   TIMES30 = CD30;
+   IF TIMES30 = . THEN TIMES30 = 0;
    IF RECENT6 = . THEN RECENT6=0;
    IF FIRST6 = . THEN FIRST6=0;
    IF LAST12 = . THEN LAST12=0;
@@ -1132,85 +1175,85 @@ DATA atb4; *create NEw counter variables;
    IF LAST12_60 = . THEN LAST12_60=0;
    IF RECENT3 = . THEN RECENT3 = 0;
    IF RECENT4TO6=. THEN RECENT4TO6=0;
-   DROP cd30;
-   format delq1-delq12 cdfmt.;
+   DROP CD30;
+   FORMAT DELQ1-DELQ12 CDFMT.;
 RUN;
-PROC SORT DATA=atb4 NODUPKEY; BY bracctno; RUN; *SORT TO MERGE;
-DATA xsdlq; SET atb4; DROP NULL; *DROPpINg the NULL column (NOT NULLs IN DATASET); RUN;
+PROC SORT DATA=ATB4 NODUPKEY; BY BRACCTNO; RUN; *SORT TO MERGE;
+DATA xSDLQ; SET ATB4; DROP NULL; *DROPpINg THE NULL column (NOT NULLS IN DATASET); RUN;
 
-DATA xs;
+DATA xS;
 SET MERGED_L_B2;
 IF CAMP_TYPE="XS";
 RUN;
-PROC SORT DATA=xs; *SORT TO MERGE;
-BY BrAcctNo;
+PROC SORT DATA=xS; *SORT TO MERGE;
+BY BRACCTNO;
 RUN;
-DATA xswithdlq; *MERGE pull AND dql INFOrmation;
-MERGE xs(IN=x) xsdlq(IN=y);
-BY bracctno;
+DATA xSwithDLQ; *MERGE PULL AND dql INFORMATion;
+MERGE xS(IN=x) xSDLQ(IN=y);
+BY BRACCTNO;
 IF x=1;
 RUN;
 
 DATA MERGED_L_B2;
-SET fbwithdlq xswithdlq;
+SET FBwithDLQ xSwithDLQ;
 RUN;
 
 
 
-*Apply all delINquency related FLAGs;
-DATA MERGED_L_B2; *FLAG for BAD dlqatb;
+*Apply all delINquency reLATEd FLAGS;
+DATA MERGED_L_B2; *FLAG FOR BAD DLQATB;
 SET MERGED_L_B2;
 IF RECENT3>1 or RECENT6>2 or LAST12 > 3 or LAST12_60 > 1 or RECENT6_60 >0 THEN DLQ_FLAG="X";
-IF CAMP_TYPE="XS" & LAST12_60>0 THEN dlq_FLAG="X";
+IF CAMP_TYPE="XS" & LAST12_60>0 THEN DLQ_FLAG="X";
 /*IF OWNBR ="0537" THEN Harvey="Beaumont DROP";*/
-/*IF brno ="0537" THEN Harvey="Beaumont DROP";*/
+/*IF BRNO ="0537" THEN Harvey="Beaumont DROP";*/
 RUN;
 
-PROC SORT DATA=MERGED_L_B2 out= deduped NODUPKEY;
-BY BrAcctNo;
+PROC SORT DATA=MERGED_L_B2 OUT= deduped NODUPKEY;
+BY BRACCTNO;
 RUN;
 
 *Export FLAGged File;
-PROC export DATA=deduped outfile="&fINalexportFLAGged" dbms=tab; 
+PROC export DATA=deduped OUTfile="&fINalexportFLAGged" dbmS=tab; 
 RUN;
 
 
- *Create fINal file for DROPs;
+ *Create fINal file FOR DROPS;
  DATA fINal; SET deduped; RUN;
 
 
  DATA Waterfall;
- LENGTH Criteria $50 Count 8.;
- INfile DATAlINEs dlm="," tRUNcover;
- INput Criteria $ Count;
- DATAlINEs;
+ LENGTH Criteria $50 COUNT 8.;
+ INfile DATAlINES dlm="," tRUNcover;
+ INPUT Criteria $ COUNT;
+ DATAlINES;
 TCI DATA,
 XS TOtal,
 FB TOtal,
 XS + FB TOtal,		
-Delete cust IN BAD BRANCHES,	
-Delete cust with MissINg INFO,	
-Delete cust OUTSIDE OF FOORPRINT,	
-Delete WHERE STATE/OwnSt Mismatch,
-Delete FB With Open Loan,
-Delete Any CusTOmer with >1 Loan,
-Delete cust with BAD POCODE,
-Delete Deceased,
-Delete IF Less than Two Payments Made,	
-Delete for ATB DelINquency,	
-Delete for ConprOFile DelINquency,
-Delete for 5 Yr. ConprOFile DelINquency,
-Delete for Bankruptcy (5yr),
-Delete for StatFLAG (5yr),
-Delete for TRW Status (5yr),
-Delete IF DNS or DNH,
-Delete cust with NULL Date OF Birth,
-Delete cust with BAD SSN,
-Delete NC AuTO Unmades,	
-Delete XS BAD FICOs,	
-Delete DelINquent ReNEwal,
-Delete PLAmt greater than $0,	
-Heavy Harvey exclusions (27 BRANCHES),	
+DELETE cuSt IN BAD BRANCHES,	
+DELETE cuSt with MISSING INFO,	
+DELETE cuSt OUTSIDE OF FOORPRINT,	
+DELETE WHERE STATE/OWNST MISmatch,
+DELETE FB With OPEN LOAN,
+DELETE ANy CUSTOMER with >1 LOAN,
+DELETE cuSt with BAD POCODE,
+DELETE DeceaSed,
+DELETE IF LeSS THAN Two PaymentS Made,	
+DELETE FOR ATB DelINquency,	
+DELETE FOR ConprOFile DelINquency,
+DELETE FOR 5 Yr. ConprOFile DelINquency,
+DELETE FOR BANkruptcy (5yr),
+DELETE FOR StatFLAG (5yr),
+DELETE FOR TRW StatuS (5yr),
+DELETE IF DNS or DNH,
+DELETE cuSt with NULL Date OF Birth,
+DELETE cuSt with BAD SSN,
+DELETE NC AuTO UnmadeS,	
+DELETE XS BAD FICOS,	
+DELETE DelINquent ReNEwal,
+DELETE PLAMT GREATER THAN $0,	
+Heavy Harvey excluSionS (27 BRANCHES),	
 ;
 RUN;
 
@@ -1225,7 +1268,7 @@ QUIT;
 PROC SQL; *COUNT OBS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FB; quit;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM MERGED_L_B_XS_FB2; 
 QUIT;
 
@@ -1233,7 +1276,7 @@ DATA FINAL;
 	SET FINAL; 
 	IF BADBRANCH_FLAG = ""; RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1242,7 +1285,7 @@ DATA FINAL;
 	IF MISSINGINFO_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1251,7 +1294,7 @@ DATA FINAL;
 	IF OOS_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1260,7 +1303,7 @@ DATA FINAL;
 	IF STATE_MISMATCH_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1269,7 +1312,7 @@ DATA FINAL;
 	IF OPEN_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1278,7 +1321,7 @@ DATA FINAL;
 	IF OPEN_FLAG2 = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1287,7 +1330,7 @@ DATA FINAL;
 	IF BADPOCODE_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1296,7 +1339,7 @@ DATA FINAL;
 	IF DECEASED_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs;
+PROC SQL; *COUNT obS;
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1305,7 +1348,7 @@ DATA FINAL;
 	IF LESSTHAN2_FLAG = ""; 
 RUN; 
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1314,7 +1357,7 @@ DATA FINAL;
 	IF DLQ_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1323,7 +1366,7 @@ DATA FINAL;
 	IF CONPROFILE_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1332,7 +1375,7 @@ DATA FINAL;
 	IF CON1YR_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1341,7 +1384,7 @@ DATA FINAL;
 	IF BK5_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1350,7 +1393,7 @@ DATA FINAL;
 	IF STATFL_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1359,7 +1402,7 @@ DATA FINAL;
 	IF TRW_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1368,7 +1411,7 @@ DATA FINAL;
 	IF DNS_DNH_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT; 
 
@@ -1377,7 +1420,7 @@ DATA FINAL;
 	IF NULLDOB_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1386,7 +1429,7 @@ DATA FINAL;
 	IF BADSSN_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1395,7 +1438,7 @@ DATA FINAL;
 	IF NCAUTOUN_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1404,7 +1447,7 @@ DATA FINAL;
 	IF BADFICO_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1413,16 +1456,16 @@ DATA FINAL;
 	IF DLQREN_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
 DATA FINAL; 
 	SET FINAL; 
-	IF PlAmt_FLAG = ""; 
+	IF PLAMT_FLAG = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
@@ -1431,32 +1474,32 @@ DATA FINAL;
 	IF HARVEY = ""; 
 RUN;
 
-PROC SQL; *Count obs; 
+PROC SQL; *COUNT obS; 
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
-PROC prINt DATA=count noobs;  *PrINt FINal Count Table;
+PROC prINt DATA=COUNT noobS;  *PrINt FINal COUNT Table;
 RUN;
 PROC prINt DATA=waterfall;  *PrINt Waterfall;
 RUN;
 
 
 DATA fINal;
-LENGTH month_split $6;
+LENGTH month_Split $6;
 SET fINal;
-IF SUBSTR(SSNO1,9,1) IN (1,3,5,7,9) THEN month_split="Odd";
-ELSE month_split="Even";
+IF SUBSTR(SSNO1,9,1) IN (1,3,5,7,9) THEN month_Split="Odd";
+ELSE month_Split="Even";
 RUN;
 
 
 *Export FINal File;
-PROC export DATA=fINal outfile="&fINalexportDROPped" dbms=tab replace; RUN;
+PROC export DATA=fINal OUTfile="&fINalexportDROPped" dbmS=tab replace; RUN;
 
 
-*Send TO DOD;
+*SEND TO DOD;
 DATA mla;
 SET fINal;
-KEEP SSNO1 DOB LASTNAME FIRSTNAME middlename bracctno;
+KEEP SSNO1 DOB LASTNAME FIRSTNAME middlename BRACCTNO;
 RUN;
 
 DATA MLA;
@@ -1464,171 +1507,171 @@ DATA MLA;
 	IDENTIFIER = "S";
 RUN;
 
-PROC DATASETs;
+PROC DATASETS;
 modIFy mla;
 rename DOB ="Date OF Birth"n 
-	   SSNO1="Social Security Number (SSN)"n 
+	   SSNO1="Social Security NUMBER (SSN)"n 
 	   LASTNAME="LAST Name"n 
 	   FIRSTNAME="FIRST Name"n 
 	   middlename="Middle Name"n 
-	   bracctno="CusTOmer Record ID"n
-	   IDENTIFIER = "Person IdentIFier Code"n;
+	   BRACCTNO="CUSTOMER Record ID"n
+	   IDENTIFIER = "PerSon IdentIFier Code"n;
 RUN;
 DATA fINalmla;
-LENGTH "Social Security Number (SSN)"n $ 9 
+LENGTH "Social Security NUMBER (SSN)"n $ 9 
 	   "Date OF Birth"n $ 8 
 	   "LAST Name"n $ 26 
 	   "FIRST Name"n $20 
 	   "Middle Name"n $ 20  
-	   "CusTOmer Record ID"n $ 28
-	   "Person IdentIFier Code"n $ 1;
+	   "CUSTOMER Record ID"n $ 28
+	   "PerSon IdentIFier Code"n $ 1;
 SET mla;
 RUN;
 
-PROC prINt DATA=fINalmla (obs=10); RUN;
-PROC contents DATA=fINalmla; RUN;
+PROC prINt DATA=fINalmla (obS=10); RUN;
+PROC contentS DATA=fINalmla; RUN;
 
 
 
 DATA _NULL_;
  SET fINalmla;
  file "&exportMLA";
- put @1 "Social Security Number (SSN)"n 
+ PUT @1 "Social Security NUMBER (SSN)"n 
 	 @10 "Date OF Birth"n 
 	 @ 18 "LAST Name"n 
 	 @ 44 "FIRST Name"n 
 	 @ 64 "Middle Name"n 
-	 @ 84 "CusTOmer Record ID"n
-	 @ 112 "Person IdentIFier Code"n;
+	 @ 84 "CUSTOMER Record ID"n
+	 @ 112 "PerSon IdentIFier Code"n;
  RUN;
 
 
 
 
-*Step 2: When file is returNEd from DOD, RUN code below;
-filename mla1 "\\mktg-app01\E\Production\MLA\MLA-OUTPUT files FROM WEBSITE\MLA_4_4_FBCC_20180402_V2.txt";  *do NOT change file name;
+*Step 2: WHEN file IS returNEd from DOD, RUN code below;
+filename mla1 "\\mktg-app01\E\Production\MLA\MLA-OUTPUT fileS FROM WEBSITE\MLA_4_4_FBCC_20180402_V2.txt";  *DO NOT chANge file name;
 DATA mla1;
 INfile mla1;
-INput SSNO1 $ 1-9 DOB $ 10-17 LASTNAME $ 18-43 FIRSTNAME $ 44-63 middlename $ 64-83  bracctno $ 84-120 mla_dod $121-145;
-mla_status=SUBSTR(mla_dod,1,1);
+INPUT SSNO1 $ 1-9 DOB $ 10-17 LASTNAME $ 18-43 FIRSTNAME $ 44-63 middlename $ 64-83  BRACCTNO $ 84-120 mla_DOd $121-145;
+mla_StatuS=SUBSTR(mla_DOd,1,1);
 RUN;
-PROC prINt DATA=mla1 (obs=10);
+PROC prINt DATA=mla1 (obS=10);
 RUN;
 
 
-DATA fbccfINal; SET fINal; RUN;
+DATA FBccfINal; SET fINal; RUN;
 
-PROC SORT DATA=fbccfINal; BY BrAcctNo; RUN;
-PROC SORT DATA=mla1; BY BrAcctNo; RUN;
+PROC SORT DATA=FBccfINal; BY BRACCTNO; RUN;
+PROC SORT DATA=mla1; BY BRACCTNO; RUN;
 
 DATA fINalhh;
-MERGE fbccfINal(IN=x) mla1;
-BY bracctno;
+MERGE FBccfINal(IN=x) mla1;
+BY BRACCTNO;
 IF x;
-rename crscore=fico;
+rename crScore=fico;
 RUN;
 
-*Count for Waterfall;
+*COUNT FOR Waterfall;
 PROC freq DATA=fINalhh;
-table mla_status/nocum nopercent;
+table mla_StatuS/nocum nopercent;
 RUN;
 
 
 DATA fINalhh2;
-LENGTH fico_range_25pt $10 campaign_id $25 MADE_UNMADE $15 cIFno $20 custid $20 mgc $20 STATE1 $5 test_code $20;
+LENGTH fico_rANge_25pt $10 campaign_id $25 MADE_UNMADE $15 cIFno $20 cuStid $20 mgc $20 STATE1 $5 teSt_code $20;
 SET fINalhh;
-IF mla_status="N";
-IF fico=0 THEN fico_range_25pt= "0";
-IF 0<fico<500 THEN fico_range_25pt="<500";
-IF 500<=fico<=524 THEN fico_range_25pt= "500-524";
-IF 525<=fico<=549 THEN fico_range_25pt= "525-549";
-IF 550<=fico<=574 THEN fico_range_25pt= "550-574";
-IF 575<=fico<=599 THEN fico_range_25pt= "575-599";
-IF 600<=fico<=624 THEN fico_range_25pt= "600-624";
-IF 625<=fico<=649 THEN fico_range_25pt= "625-649";
-IF 650<=fico<=674 THEN fico_range_25pt= "650-674";
-IF 675<=fico<=699 THEN fico_range_25pt= "675-699";
-IF 700<=fico<=724 THEN fico_range_25pt= "700-724";
-IF 725<=fico<=749 THEN fico_range_25pt= "725-749";
-IF 750<=fico<=774 THEN fico_range_25pt= "750-774";
-IF 775<=fico<=799 THEN fico_range_25pt= "775-799";
-IF 800<=fico<=824 THEN fico_range_25pt= "800-824";
-IF 825<=fico<=849 THEN fico_range_25pt= "825-849";
-IF 850<=fico<=874 THEN fico_range_25pt= "850-874";
-IF 875<=fico<=899 THEN fico_range_25pt= "875-899";
-IF 975<=fico<=999 THEN fico_range_25pt= "975-999";
-IF fico="" THEN fico_range_25pt= "";
-IF source_2 = "RETAIL" THEN CAMPAIGN_id = "&retail_id";
-IF source_2 = "AUTO" THEN CAMPAIGN_id = "&auTO_id";
-IF CAMP_TYPE="FB" THEN CAMPAIGN_id = "&fb_id";
-IF POFFDATE > "&_1month" THEN RECENTPyout="Yes";
-ELSE RECENTPyout="No";
-IF month_split="&odd_even" | RECENTPyout="Yes";
-custid=STRIP(_n_);
-IF CAMP_TYPE="FB" THEN do;
-IF lnamt >= 1500 & times30 = 0 THEN risk_segment = "A";
-IF lnamt >= 1500 & FIRST6 > 0 THEN risk_segment = "A AND B";
-IF lnamt >= 1500 & FIRST6 = . & times30 NE 0 THEN risk_segment = "A AND B";
-IF lnamt >= 1500 & times30 NE 0 THEN risk_segment = "A AND B";
-IF lnamt < 1500 THEN risk_segment="A AND B";
-IF OWNBR="1019" THEN risk_segment="AL";
-end;
+IF mla_StatuS="N";
+IF fico=0 THEN fico_rANge_25pt= "0";
+IF 0<fico<500 THEN fico_rANge_25pt="<500";
+IF 500<=fico<=524 THEN fico_rANge_25pt= "500-524";
+IF 525<=fico<=549 THEN fico_rANge_25pt= "525-549";
+IF 550<=fico<=574 THEN fico_rANge_25pt= "550-574";
+IF 575<=fico<=599 THEN fico_rANge_25pt= "575-599";
+IF 600<=fico<=624 THEN fico_rANge_25pt= "600-624";
+IF 625<=fico<=649 THEN fico_rANge_25pt= "625-649";
+IF 650<=fico<=674 THEN fico_rANge_25pt= "650-674";
+IF 675<=fico<=699 THEN fico_rANge_25pt= "675-699";
+IF 700<=fico<=724 THEN fico_rANge_25pt= "700-724";
+IF 725<=fico<=749 THEN fico_rANge_25pt= "725-749";
+IF 750<=fico<=774 THEN fico_rANge_25pt= "750-774";
+IF 775<=fico<=799 THEN fico_rANge_25pt= "775-799";
+IF 800<=fico<=824 THEN fico_rANge_25pt= "800-824";
+IF 825<=fico<=849 THEN fico_rANge_25pt= "825-849";
+IF 850<=fico<=874 THEN fico_rANge_25pt= "850-874";
+IF 875<=fico<=899 THEN fico_rANge_25pt= "875-899";
+IF 975<=fico<=999 THEN fico_rANge_25pt= "975-999";
+IF fico="" THEN fico_rANge_25pt= "";
+IF Source_2 = "RETAIL" THEN CAMPAIGN_id = "&retail_id";
+IF Source_2 = "AUTO" THEN CAMPAIGN_id = "&auTO_id";
+IF CAMP_TYPE="FB" THEN CAMPAIGN_id = "&FB_id";
+IF POFFDATE > "&_1month" THEN RECENTPyOUT="YeS";
+ELSE RECENTPyOUT="No";
+IF month_Split="&odd_even" | RECENTPyOUT="YeS";
+cuStid=STRIP(_n_);
+IF CAMP_TYPE="FB" THEN DO;
+IF LNAMT >= 1500 & TIMES30 = 0 THEN rISk_Segment = "A";
+IF LNAMT >= 1500 & FIRST6 > 0 THEN rISk_Segment = "A AND B";
+IF LNAMT >= 1500 & FIRST6 = . & TIMES30 NE 0 THEN rISk_Segment = "A AND B";
+IF LNAMT >= 1500 & TIMES30 NE 0 THEN rISk_Segment = "A AND B";
+IF LNAMT < 1500 THEN rISk_Segment="A AND B";
+IF OWNBR="1019" THEN rISk_Segment="AL";
+END;
 RUN;
 DATA fINalhh2;
 SET fINalhh2;
-rename brno=BRANCH FIRSTNAME=cfname1 middlename=cmname1 LASTNAME=clname1 ADR1=caddr1 ADR2=caddr2
-CITY=cCITY STATE=cst ZIP=cZIP SSNO1_RT7=ssn cd60=n_60_dpd CONPROFILE1=ConPrOFile;
+rename BRNO=BRANCH FIRSTNAME=cfname1 middlename=cmname1 LASTNAME=clname1 ADR1=caddr1 ADR2=caddr2
+CITY=cCITY STATE=cSt ZIP=cZIP SSNO1_RT7=SSn CD60=n_60_dpd CONPROFILE1=ConPrOFile;
 RUN;
 
 
 
 
 PROC import 
-	DATAfile="\\mktg-app01\E\Production\Master Files AND INstructions\FBXSCC_OFfers - 20180402.xlsx" 
-		dbms=excel 
-		out=OFfers 
+	DATAfile="\\mktg-app01\E\Production\MaSter FileS AND INStructionS\FBXSCC_OFferS - 20180402.xlSx" 
+		dbmS=excel 
+		OUT=OFferS 
 		replace; 
 RUN;
 
-DATA OFfers;
-	SET OFfers;
-	risk_segment=STRIP(risk_segment);
+DATA OFferS;
+	SET OFferS;
+	rISk_Segment=STRIP(rISk_Segment);
 RUN;
 
 PROC SORT 
 	DATA=fINalhh2; 
-	BY cst risk_segment; 
+	BY cSt rISk_Segment; 
 RUN;
 
 PROC SORT 
-	DATA=OFfers; 
-	BY cst risk_segment; 
+	DATA=OFferS; 
+	BY cSt rISk_Segment; 
 RUN;
 
 DATA fINalhh4;
-	MERGE fINalhh2(IN=x) OFfers;
-	BY cst risk_segment;
+	MERGE fINalhh2(IN=x) OFferS;
+	BY cSt rISk_Segment;
 	IF x;
-	format amt_given1 dollar10.2;
+	FORMAT amt_given1 DOllar10.2;
 	rename apr=percent;
 RUN;
 
-*IF risk_segment="Test" THEN test_code="Rate_Test";
-*ELSE test_code="Control";
+*IF rISk_Segment="TeSt" THEN teSt_code="Rate_TeSt";
+*ELSE teSt_code="Control";
 
 
-PROC sql;
-create table fINalhh5 as
-select custid, BRANCH, cfname1,	cmname1, clname1, caddr1, caddr2, cCITY, cst, cZIP,	ssn, amt_given1, percent,	numpymnts, CAMP_TYPE, orig_amtid, fico, DOB, mla_status, risk_segment, n_60_dpd, conprOFile, bracctno, cIFno, campaign_id, mgc, month_split, MADE_UNMADE, fico_range_25pt, STATE1, test_code, POFFDATE, phoNE, cellphoNE
+PROC Sql;
+create table fINalhh5 aS
+Select cuStid, BRANCH, cfname1,	cmname1, clname1, caddr1, caddr2, cCITY, cSt, cZIP,	SSn, amt_given1, percent,	numpymntS, CAMP_TYPE, orig_amtid, fico, DOB, mla_StatuS, rISk_Segment, n_60_dpd, conprOFile, BRACCTNO, cIFno, campaign_id, mgc, month_Split, MADE_UNMADE, fico_rANge_25pt, STATE1, teSt_code, POFFDATE, phoNE, cellphoNE
 from fINalhh4;
 quit;
 RUN;
 
 
-PROC export DATA=fINalhh5 outfile="&fINalexportHH"  dbms=tab;
+PROC export DATA=fINalhh5 OUTfile="&fINalexportHH"  dbmS=tab;
  RUN;
 
- PROC export DATA=fINalhh5 outfile="&fINalexportED" dbms=csv;
+ PROC export DATA=fINalhh5 OUTfile="&fINalexportED" dbmS=cSv;
  RUN;
 
 
@@ -1640,11 +1683,11 @@ IF amt_given1="";
 RUN;
 
 PROC freq DATA=fINalhh5;
-tables Risk_Segment;
+tableS RISk_Segment;
 RUN;
 
 PROC freq DATA=fINalhh5;
-tables month_split;
+tableS month_Split;
 RUN;
 
 
@@ -1653,23 +1696,23 @@ RUN;
 
  
 /*
-DATA NOTest test;
+DATA NOTESt teSt;
 SET fINalhh2;
-IF cst = "AL" & risk_segment="A" THEN OUTPUT test;
-ELSE OUTPUT NOTest;
+IF cSt = "AL" & rISk_Segment="A" THEN OUTPUT teSt;
+ELSE OUTPUT NOTESt;
 RUN;
-PROC surveyselect DATA=test out=test2 outall rate=.5 method=srs;
+PROC SurveySelect DATA=teSt OUT=teSt2 OUTall rate=.5 method=SrS;
 RUN;
 DATA fINalhh3;
-SET NOTest test2;
-IF selected=1 THEN risk_segment="Test";
-IF selected=0 THEN risk_segment="A";
-risk_segment=STRIP(risk_segment);
+SET NOTESt teSt2;
+IF Selected=1 THEN rISk_Segment="TeSt";
+IF Selected=0 THEN rISk_Segment="A";
+rISk_Segment=STRIP(rISk_Segment);
 RUN;
 PROC freq DATA=fINalhh3;
-tables Risk_Segment;
+tableS RISk_Segment;
 RUN;
  PROC freq DATA=fINalhh5;
-tables test_code;
+tableS teSt_code;
 RUN;
 */
