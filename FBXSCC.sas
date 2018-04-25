@@ -14,12 +14,12 @@
 DATA 
 	_NULL_;
 
-	CALL SYMPUT ('_1day','2018-04-01'); /* DAY BEFORE PULL */
-	CALL SYMPUT ('_1month','2018-03-02'); /* 1 MONTH FROM PULL */
-	CALL SYMPUT ('_16month','2016-12-02'); /*16 MONTHS FROM PULL*/
-	CALL SYMPUT('_3YEAR','2015-04-02'); /* 3 YEARS FROM PULL */
-	CALL SYMPUT('_5YEAR','2013-04-02'); /* 5 YEARS FROM PULL */
-	CALL SYMPUT ('_15month','2017-01-02'); /*15 MONTHS FROM PULL*/
+	CALL SYMPUT ('_1DAY','2018-04-23'); /* DAY BEFORE PULL */
+	CALL SYMPUT ('_1MONTH','2018-03-24'); /* 1 MONTH FROM PULL */
+	CALL SYMPUT ('_16MONTH','2016-12-23'); /*16 MONTHS FROM PULL*/
+	CALL SYMPUT('_3YR','2015-04-25'); /* 3 YEARS FROM PULL */
+	CALL SYMPUT('_5YR','2013-04-25'); /* 5 YEARS FROM PULL */
+	CALL SYMPUT ('_15MONTH','2017-01-22'); /*15 MONTHS FROM PULL*/
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
 	CALL SYMPUT ('retail_id', 'RetailXS_5.0_2018');
@@ -27,28 +27,41 @@ DATA
 	CALL SYMPUT ('FB_id', 'FB_5.0_2018CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('odd_even', 'Odd'); 
+	CALL SYMPUT ('odd_even', 'Even'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
-	CALL SYMPUT ('fINalexportFLAGged', 
+	/*
+	CALL SYMPUT ('fInalexportflagged', 
 		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_.20180402FLAGGED_V2.txt');
-	CALL SYMPUT ('fINalexportDROPped', 
+	CALL SYMPUT ('fInalexportdropped', 
 		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_20180402FINAL_V2.txt');
 	CALL SYMPUT ('exportMLA', 
 		'\\mktg-app01\E\Production\MLA\MLA-INPUT fileS TO WEBSITE\FBCC_20180402_V2.txt');
-	CALL SYMPUT ('fINalexportED', 
+	CALL SYMPUT ('fInalexportED', 
 		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.cSv');
-	CALL SYMPUT ('fINalexportHH', 
+	CALL SYMPUT ('fInalexportHH', 
 		'\\mktg-app01\E\Production\2018\04-April_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.txt');
+	*/
+
+	CALL SYMPUT ('fInalexportflagged', 
+		'\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_.20180424FLAGGED.txt');
+	CALL SYMPUT ('fInalexportdropped', 
+		'\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_20180424FINAL.txt');
+	CALL SYMPUT ('exportMLA', 
+		'\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBCC_20180424.txt');
+	CALL SYMPUT ('fInalexportED', 
+		'\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_20180424FINAL_HH.csv');
+	CALL SYMPUT ('fInalexportHH', 
+		'\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_20180424FINAL_HH.txt');
 RUN;
 
 *** CHECK THAT MACRO VARIABLES WERE ASSIGNED CORRECTLY ----------- ***;
-%PUT "&_15MONTHSAGO" "&_5yrdate" "&yeSterday";
+%PUT "&_15MONTH" "&_5YR" "&_1DAY";
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\ceppS\FBXS\XS_Mail_PULL.xlSx" 
+		"\\mktg-app01\E\cepps\FBXS\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -61,52 +74,52 @@ DATA XS2;
 	*** CREATE `SOURCE` VARIABLE AND ASSIGN `LOAN TYPE = AUTO      ***;
 	*** INDIRECT` AS `TCICENTRAL` OR `LOAN TYPE = RETAIL` AS       ***; 
 	*** `TCIRETAIL` ---------------------------------------------- ***;
-	IF 'LOAN type'n = "AuTO INdirect" THEN SOURCE = "TCICentral";
-	IF 'LOAN type'n = "Retail" THEN SOURCE = "TCIRetail";
+	IF 'Loan Type'n = "Auto Indirect" THEN SOURCE = "TCICentral";
+	IF 'Loan Type'n = "Retail" THEN SOURCE = "TCIRetail";
 	IF SOURCE NE "";
 
-	*** SEPERATE `applicANt addreSS` VARIABLE INTO `ADR1`, `CITY`, ***; 
-	*** `STATE`, AND `ZIP` VARIABLES WHEN `applicANt addreSS` DOES ***; 
+	*** SEPERATE `applicant address` VARIABLE INTO `ADR1`, `CITY`, ***; 
+	*** `STATE`, AND `ZIP` VARIABLES WHEN `applicant address` DOES ***; 
 	*** NOT CONTAIN THE STRING "Apt" ----------------------------- ***;
-	IF FIND('applicANt addreSS'n, "Apt") = 0 THEN DO;
-		ADR1 = SCAN('applicANt addreSS'n, 1, ",");
-		CITY = SCAN('applicANt addreSS'n, 2, ",");
-		STATE = SCAN('applicANt addreSS'n, 3, ",");
-		ZIP = SCAN('applicANt addreSS'n, 4, ",");
+	IF FIND('applicant address'n, "Apt") = 0 THEN DO;
+		ADR1 = SCAN('applicant address'n, 1, ",");
+		CITY = SCAN('applicant address'n, 2, ",");
+		STATE = SCAN('applicant address'n, 3, ",");
+		ZIP = SCAN('applicant address'n, 4, ",");
 	END;
 
-	*** SEPERATE `applicANt addreSS` VARIABLE INTO `ADR1`, `ADR2`, ***;
+	*** SEPERATE `applicant address` VARIABLE INTO `ADR1`, `ADR2`, ***;
 	*** `CITY`, `STATE`, AND `ZIP` VARIABLES WHEN `applicANt       ***;
 	*** addreSS` CONTAINS THE STRING "Apt" ----------------------- ***;
-	IF FIND('applicANt addreSS'n, "Apt") GE 1 THEN DO;
-		ADR1 = SCAN('applicANt addreSS'n, 1, ",");
-		ADR2 = SCAN('applicANt addreSS'n, 2, ",");
-		CITY = SCAN('applicANt addreSS'n, 3, ",");
-		STATE = SCAN('applicANt addreSS'n, 4, ",");
-		ZIP = SCAN('applicANt addreSS'n, 5, ",");
+	IF FIND('applicant address'n, "Apt") GE 1 THEN DO;
+		ADR1 = SCAN('applicant address'n, 1, ",");
+		ADR2 = SCAN('applicant address'n, 2, ",");
+		CITY = SCAN('applicant address'n, 3, ",");
+		STATE = SCAN('applicant address'n, 4, ",");
+		ZIP = SCAN('applicant address'n, 5, ",");
 	END;
 
 	*** FORMAT `applicANt DOB` AS YYMMDD10 AND STORE IN `DOB`      ***;
 	*** VARIABLE. ------------------------------------------------ ***;
-	DOB = PUT('applicANt DOB'n, YYMMDD10.);
+	DOB = PUT('applicant DOB'n, YYMMDD10.);
 
 	*** FORMAT `application date` AS MMDDYY10 -------------------- ***;
 	'application date1'n = PUT('application date'n, MMDDYY10.);
 
 	*** CONCATENATE "TCI" TO `Application NUMBER` AND STORE AS     ***;
 	*** `BRACCTNO` VARIABLE -------------------------------------- ***;
-	BRACCTNO = CATS("TCI", 'Application NUMBER'n);
+	BRACCTNO = CATS("TCI", 'Application Number'n);
 
 	*** SUB-STRING THE LAST 7 DIGITS FROM THE `applicANt SSn`      ***;
 	*** VARIABLE AND STORE THEM IN `SSNO1_RT7` VARIABLE ---------- ***;
-	SSNO1_RT7 = SUBSTRN('applicANt SSn'n, MAX(1, 
-		LENGTH('applicANt SSn'n) - 6), 7);
+	SSNO1_RT7 = SUBSTRN('applicant ssn'n, MAX(1, 
+		LENGTH('applicant ssn'n) - 6), 7);
 
-	*** DROP THE VARIABLES `Application Date`, `ApplicANt AddreSS`,***;
-	*** `ApplicANt AddreSS ZIP`, `ApplicANt DOB`, `app. work phoNE`***;
+	*** DROP THE VARIABLES `Application Date`, `applicant address`,***;
+	*** `applicant address ZIP`, `ApplicANt DOB`, `app. work phoNE`***;
 	*** FROM NEWXS2 DATASET -------------------------------------- ***;
-	DROP 'Application Date'n 'ApplicANt AddreSS'n
-		'ApplicANt AddreSS ZIP'n 'ApplicANt DOB'n 'app. work phoNE'n;
+	DROP 'Application Date'n 'applicant address'n
+		'applicant address zip'n 'applicant DOB'n 'app. work phone'n;
 
 	*** RENAME THE `application date1`, `applicANt email`,         ***;
 	*** `ApplicANt Credit Score`, `ApplicANt FIRST Name`,          ***;
@@ -114,9 +127,9 @@ DATA XS2;
 	*** Name`, `app. cell phoNE`, AND `app. home phoNE` VARIABLES  ***;
 	RENAME 
 		'application date1'n = 'application date'n
-		'applicANt email'n = EMAIL 
-		'ApplicANt Credit Score'n = CRSCORE
-		'ApplicANt FIRST Name'n = FIRSTNAME
+		'applicant email'n = EMAIL 
+		'applicant Credit Score'n = CRSCORE
+		'applicant FIRST Name'n = FIRSTNAME
 		'ApplicANt LAST Name'n = LASTNAME 
 		'ApplicANt SSN'n = SSNO1
 		'ApplicANt Middle Name'n = MIDDLENAME 
@@ -161,7 +174,7 @@ DATA XS_L;
 	*** ONLY NULLS FROM `BNKRPTDATE`. KEEP RELEVANT `CLASSID`S AND ***;
 	*** `OWNST`S ------------------------------------------------- ***;
 	WHERE CIFNO NE "" & 
-		ENTDATE >= "&_15month" & 
+		ENTDATE >= "&_15MONTH" & 
 		POCD = "" & 
 		PLCD = "" & 
 		PLDATE = "" & 
@@ -321,7 +334,7 @@ RUN;
 
 DATA UNMADES2;
 	SET UNMADES (WHERE = (INTNX('month', TODAY(), -6, 'b') <= 
-		APPLICATION_DATE OR APPLICATION_DATE = .));
+		APPLICATION_DATE));
 RUN;
 
 *** FOR MATCHED, KEEP ONLY INFO FROM LOAN AND BORROWER TABLES ---- ***;
@@ -332,7 +345,7 @@ RUN;
 
 *** APPEND MADES AND UNMADES FOR FULL XS UNIVERSE ---------------- ***;
 DATA XSTOT; 
-	SET UNMADES MADES2;
+	SET UNMADES2 MADES2;
 RUN;
 
 DATA XSTOT;
@@ -391,7 +404,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 			   XNO_TRUEDUEDATE FIRSTPYDATE SRCD POCD POFFDATE PLCD
 			   PLDATE PLAMT BNKRPTDATE BNKRPTCHAPTER DATEPAIDLAST
 			   APRATE CRSCORE CURBAL);
-	WHERE POFFDATE BETWEEN "&_15month" AND "&_1day" & 
+	WHERE POFFDATE BETWEEN "&_15MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
 					"VA"); /* PAID OUT LOANS */
@@ -435,7 +448,7 @@ RUN;
 *** PULL IN INFORMATION FOR STATFLAGS ---------------------------  ***;
 DATA STATFLAGS;
 	SET dw.vw_loan(KEEP = OWNBR SSNO1_RT7 ENTDATE STATFLAGS);
-	WHERE ENTDATE > "&_3YEAR" & 
+	WHERE ENTDATE > "&_3YR" & 
 		  STATFLAGS NE "";
 RUN;
 
@@ -482,7 +495,7 @@ RUN;
 DATA BK5YRDROPS;
 	SET dw.vw_loan (
 		KEEP = ENTDATE SSNO1_RT7 OWNBR BNKRPTDATE BNKRPTCHAPTER);
-	WHERE ENTDATE > "&_5YEAR";
+	WHERE ENTDATE > "&_5YR";
 RUN;
 DATA BK5YRDROPS;
 	SET BK5YRDROPS;
@@ -602,7 +615,7 @@ RUN;
 
 DATA CON1YR_FL; /* FIND FROM 2 YEARS BACK */
 	SET dw.vw_loan(KEEP = OWNBR SSNO1_RT7 ENTDATE CONPROFILE1);
-	WHERE ENTDATE > "&_15month" & CONPROFILE1 NE "";
+	WHERE ENTDATE > "&_15MONTH" & CONPROFILE1 NE "";
 	DATA CON1YR_FL; /* FLAG FOR CON5 */
 	SET CON1YR_FL;
 	_60 = COUNTC(CONPROFILE1, "2");
@@ -980,14 +993,14 @@ DATA TEMP;
 	SET dw.vw_loan(
 		KEEP = BRACCTNO SRCD ENTDATE POFFDATE POCD CLASSTRANSLATION
 			   LNAMT CONPROFILE1 BRTRFFG SSNO1_RT7 
-		WHERE = (POCD = '13' AND POFFDATE > "&_15month"));
+		WHERE = (POCD = '13' AND POFFDATE > "&_15MONTH"));
 	ENTDT = INPUT(SUBSTR(ENTDATE, 6, 2) || '/' || 
 				  SUBSTR(ENTDATE, 9, 2) || '/' ||
 				  SUBSTR(ENTDATE, 1, 4), mmddyy10.);
 	PODT = INPUT(SUBSTR(POFFDATE, 6, 2) || '/' ||
 				 SUBSTR(POFFDATE, 9, 2) || '/' ||
 				 SUBSTR(POFFDATE, 1, 4), mmddyy10.);
-	IF POFFDATE > "&_1day" THEN DELETE;
+	IF POFFDATE > "&_1DAY" THEN DELETE;
 	IF PUT(ENTDT, yymmn6.) = PUT(PODT, yymmn6.) THEN DELETE;
 	DROP POFFDATE ENTDATE POCD SRCD;
 RUN; 
@@ -1117,7 +1130,7 @@ RUN;
 
 *Step 14:  PULL AND MERGE DLQ INFO FOR xS'S;
 DATA ATB; 
-   SET dw.ATB_DATA(KEEP=BRACCTNO AGE2 YEARMONTH WHERE=(YEARMONTH between "&_16month" AND "&_1day"));   
+   SET dw.ATB_DATA(KEEP=BRACCTNO AGE2 YEARMONTH WHERE=(YEARMONTH between "&_16MONTH" AND "&_1DAY"));   
    ATBDT = INPUT(SUBSTR(YEARMONTH,6,2)||'/'||SUBSTR(YEARMONTH,9,2)||'/'||SUBSTR(YEARMONTH,1,4),mmddyy10.);     
    AGE = INTCK('month',ATBDT,"&SySdate"d);
 CD = SUBSTR(AGE2,1,1)*1;   
@@ -1214,7 +1227,7 @@ BY BRACCTNO;
 RUN;
 
 *Export FLAGged File;
-PROC export DATA=deduped OUTfile="&fINalexportFLAGged" dbmS=tab; 
+PROC export DATA=deduped OUTfile="&fInalexportflagged" dbmS=tab; 
 RUN;
 
 
@@ -1493,7 +1506,7 @@ RUN;
 
 
 *Export FINal File;
-PROC export DATA=fINal OUTfile="&fINalexportDROPped" dbmS=tab replace; RUN;
+PROC export DATA=fINal OUTfile="&fInalexportdropped" dbmS=tab replace; RUN;
 
 
 *SEND TO DOD;
@@ -1549,7 +1562,7 @@ DATA _NULL_;
 
 
 *Step 2: WHEN file IS returNEd from DOD, RUN code below;
-filename mla1 "\\mktg-app01\E\Production\MLA\MLA-OUTPUT fileS FROM WEBSITE\MLA_4_4_FBCC_20180402_V2.txt";  *DO NOT chANge file name;
+filename mla1 "\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\MLA_4_4_FBCC_20180424.txt";  *DO NOT chANge file name;
 DATA mla1;
 INfile mla1;
 INPUT SSNO1 $ 1-9 DOB $ 10-17 LASTNAME $ 18-43 FIRSTNAME $ 44-63 middlename $ 64-83  BRACCTNO $ 84-120 mla_DOd $121-145;
@@ -1604,17 +1617,18 @@ IF fico="" THEN fico_rANge_25pt= "";
 IF Source_2 = "RETAIL" THEN CAMPAIGN_id = "&retail_id";
 IF Source_2 = "AUTO" THEN CAMPAIGN_id = "&auTO_id";
 IF CAMP_TYPE="FB" THEN CAMPAIGN_id = "&FB_id";
-IF POFFDATE > "&_1month" THEN RECENTPyOUT="YeS";
+IF POFFDATE > "&_1MONTH" THEN RECENTPyOUT="YeS";
 ELSE RECENTPyOUT="No";
 IF month_Split="&odd_even" | RECENTPyOUT="YeS";
 cuStid=STRIP(_n_);
 IF CAMP_TYPE="FB" THEN DO;
 IF LNAMT >= 1500 & TIMES30 = 0 THEN rISk_Segment = "A";
-IF LNAMT >= 1500 & FIRST6 > 0 THEN rISk_Segment = "A AND B";
-IF LNAMT >= 1500 & FIRST6 = . & TIMES30 NE 0 THEN rISk_Segment = "A AND B";
-IF LNAMT >= 1500 & TIMES30 NE 0 THEN rISk_Segment = "A AND B";
-IF LNAMT < 1500 THEN rISk_Segment="A AND B";
+IF LNAMT >= 1500 & FIRST6 > 0 THEN rISk_Segment = "A and B";
+IF LNAMT >= 1500 & FIRST6 = . & TIMES30 NE 0 THEN rISk_Segment = "A and B";
+IF LNAMT >= 1500 & TIMES30 NE 0 THEN rISk_Segment = "A and B";
+IF LNAMT < 1500 THEN rISk_Segment="A and B";
 IF OWNBR="1019" THEN rISk_Segment="AL";
+IF BRNO="1019" THEN rISk_Segment="AL";
 END;
 RUN;
 DATA fINalhh2;
@@ -1627,7 +1641,7 @@ RUN;
 
 
 PROC import 
-	DATAfile="\\mktg-app01\E\Production\MaSter FileS AND INStructionS\FBXSCC_OFferS - 20180402.xlSx" 
+	DATAfile="\\mktg-app01\E\Production\MaSter FileS AND INStructionS\FBXSCC_Offers - 20180424.xlSx" 
 		dbmS=excel 
 		OUT=OFferS 
 		replace; 
@@ -1668,10 +1682,10 @@ quit;
 RUN;
 
 
-PROC export DATA=fINalhh5 OUTfile="&fINalexportHH"  dbmS=tab;
+PROC export DATA=fINalhh5 OUTfile="&fInalexportHH"  dbmS=tab;
  RUN;
 
- PROC export DATA=fINalhh5 OUTfile="&fINalexportED" dbmS=cSv;
+ PROC export DATA=fINalhh5 OUTfile="&fInalexportED" dbmS=cSv;
  RUN;
 
 
