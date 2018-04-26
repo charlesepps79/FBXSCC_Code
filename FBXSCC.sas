@@ -904,7 +904,7 @@ DATA MERGED_L_B2;
 				 "0001" , "0198" , "0600") THEN BADBRANCH_FLAG="X";
 	IF SUBSTR(OWNBR, 3, 2) = "99" THEN BADBRANCH_FLAG = "X";
 	
-	*** FIND STATES OUTSIDE OF FOORPRINT ------------------------- ***;
+	*** FIND STATES OUTSIDE OF FOOTPRINT ------------------------- ***;
 	IF STATE NOT IN ("AL", "GA", "NC", "NM", "OK",
 					 "SC", "TN", "TX", "VA") THEN OOS_FLAG = "X";
 	
