@@ -30,8 +30,9 @@ RUN;
 
 DATA TEST_SAMPLE;
 	SET TEST_SAMPLE;
-	IF branch = "1019" THEN branch = "1004";
-	IF Selected = 1 & cSt = 'TX' & RISK_SEGMENT = 'A' & 
+	IF Selected = 1 & 
+	   cSt = 'TX' & 
+	   RISK_SEGMENT = 'A' & 
 	   orig_amtid = 605 THEN DO;
 		orig_amtid = 605;
 		amt_given1 = 2400.00;
