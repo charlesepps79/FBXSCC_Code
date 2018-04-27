@@ -1,4 +1,4 @@
-%LET FINAL_HH_IMPORT = 
+﻿%LET FINAL_HH_IMPORT = 
 "\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_20180424FINAL_HH.txt";
 %LET FINAL_EXPORT_HH = 
 "\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_20180424FINAL_HH_TEST.txt";
@@ -31,14 +31,14 @@ DATA TEST_SAMPLE;
 	END;
 		
 	IF Selected = 1 & orig_amtid = 605 THEN DO;
-		/*orig_amtid = 617;*/
+		orig_amtid = 617;
 		amt_given1 = 1350.00;
 		percent = 0.48;
 		numpymnts = 18;
 	END;
 
 	IF Selected = 1 & orig_amtid = 606 THEN DO;
-		/*orig_amtid = 618;*/
+		orig_amtid = 618;
 		amt_given1 = 1350.00;
 		percent = 0.48;
 		numpymnts = 18;
