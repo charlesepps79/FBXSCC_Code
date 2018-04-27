@@ -1641,7 +1641,7 @@ RUN;
 
 
 PROC import 
-	DATAfile="\\mktg-app01\E\Production\MaSter FileS AND INStructionS\FBXSCC_Offers - 20180424.xlSx" 
+	DATAfile="\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXSCC_Offers - 20180424.xlSx" 
 		dbmS=excel 
 		OUT=OFferS 
 		replace; 

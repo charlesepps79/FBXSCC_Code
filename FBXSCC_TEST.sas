@@ -1,11 +1,16 @@
 %LET FINAL_HH_IMPORT = 
 "\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_20180424FINAL_HH.txt";
+%LET FINAL_EXPORT_HH = 
+"\\mktg-app01\E\cepps\FBXS\Files\2018_04_24\FBXS_CC_20180424FINAL_HH_TEST.txt";
 
-PROC IMPORT 
-	DATAFILE = &FINAL_HH_IMPORT. 
-	DBMS = TAB 
-	OUT = FINAL_HH 
-	REPLACE;
+%LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
+			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
+			   fico 8 Risk_Segment $7 ConProfile $12 BrAcctNo $25
+			   cifno $25 POffDate $10 Phone $40 CellPhone $13;
+%LET FORMATLIST = amt_given1 DOLLAR10.2;
+
+DATA FINAL_HH;
+	SET WORK.FBXS_CC_20180424FINAL_HH;
 RUN;
 
 PROC SURVEYSELECT 
@@ -16,13 +21,27 @@ RUN;
 
 DATA TEST_SAMPLE;
 	SET TEST_SAMPLE;
-	IF branch = "1019" THEN branch = "1004";
-	IF Selected = 1 & cSt = 'TX' & RISK_SEGMENT = 'A' & 
-	   orig_amtid = 605 THEN DO;
-		orig_amtid = 605;
-		amt_given1 = 2400.00;
-		percent = 0.32100;
-		numpymnts = 36;
+	IF RISK_SEGMENT = "AL" THEN DO; 
+		branch = "1004";
+		RISK_SEGMENT = 'A';
+		orig_amtid = 614;
+		amt_given1 = 2000.00;
+		percent = 0.44992;
+		numpymnts = 24;
+	END;
+		
+	IF Selected = 1 & orig_amtid = 605 THEN DO;
+		/*orig_amtid = 617;*/
+		amt_given1 = 1350.00;
+		percent = 0.48;
+		numpymnts = 18;
+	END;
+
+	IF Selected = 1 & orig_amtid = 606 THEN DO;
+		/*orig_amtid = 618;*/
+		amt_given1 = 1350.00;
+		percent = 0.48;
+		numpymnts = 18;
 	END;
 RUN;
 
@@ -36,6 +55,10 @@ PROC SQL;
 		   test_code, POffDate, Phone, CellPhone
 	FROM TEST_SAMPLE;
 QUIT;
+RUN;
+
+PROC EXPORT 
+	DATA = FINAL_HH_TEST OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB;
 RUN;
 
 		
