@@ -1,4 +1,4 @@
-**********************************************************************;
+﻿**********************************************************************;
 *** IMPORT NEW CROSS SELL FILES. --------------------------------- ***;
 *** INSTRUCTIONS HERE: R:\Production\MLA\FileS FOR MLA PROCeSSINg\ ***;
 *** XSELL\XSELL TCI DECSION LENDER.txt --------------------------- ***;
@@ -16,7 +16,7 @@ DATA
 
 	CALL SYMPUT ('_1DAY','2018-04-23'); /* DAY BEFORE PULL */
 	CALL SYMPUT ('_1MONTH','2018-03-24'); /* 1 MONTH FROM PULL */
-	CALL SYMPUT ('_16MONTH','2016-12-23'); /*16 MONTHS FROM PULL*/
+	CALL SYMPUT ('_30MONTH','2015-10-24'); /*30 MONTHS FROM PULL*/
 	CALL SYMPUT('_3YR','2015-04-25'); /* 3 YEARS FROM PULL */
 	CALL SYMPUT('_5YR','2013-04-25'); /* 5 YEARS FROM PULL */
 	CALL SYMPUT ('_15MONTH','2017-01-22'); /*15 MONTHS FROM PULL*/
@@ -1123,14 +1123,30 @@ BY BRACCTNO;
 IF x=1;
 RUN;
 
+DATA ATB; 
+   SET dw.ATB_DATA(KEEP=BRACCTNO AGE2 YEARMONTH WHERE=(YEARMONTH between "&_30MONTH" AND "&_1DAY"));
+RUN;
+PROC SORT DATA=ATB; *SORT TO MERGE;
+BY BRACCTNO;
+RUN;
 
+DATA NLS_POFF; 
+   SET dw.vw_Loan_NLS(KEEP=BRACCTNO POFFDATE);
+RUN;
 
-*****************************************;
+PROC SORT DATA=NLS_POFF; *SORT TO MERGE;
+BY BRACCTNO;
+RUN;
 
+DATA ATB_temp;
+MERGE ATB(IN=x) NLS_POFF(IN=y);
+BY BRACCTNO;
+IF y=x;
+RUN;
 
 *Step 14:  PULL AND MERGE DLQ INFO FOR xS'S;
 DATA ATB; 
-   SET dw.ATB_DATA(KEEP=BRACCTNO AGE2 YEARMONTH WHERE=(YEARMONTH between "&_16MONTH" AND "&_1DAY"));   
+   SET ATB_temp;   
    ATBDT = INPUT(SUBSTR(YEARMONTH,6,2)||'/'||SUBSTR(YEARMONTH,9,2)||'/'||SUBSTR(YEARMONTH,1,4),mmddyy10.);     
    AGE = INTCK('month',ATBDT,"&SySdate"d);
 CD = SUBSTR(AGE2,1,1)*1;   
