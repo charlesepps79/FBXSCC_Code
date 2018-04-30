@@ -38,7 +38,7 @@ DATA
 	CALL SYMPUT ('EXPORTMLA', 
 		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20180402_V2.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2018\04-APRil_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.CSV');
+		'\\mktg-app01\E\Production\2018\04-APRil_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
 		'\\mktg-app01\E\Production\2018\04-APRil_2018\FBXSCC\FBXS_CC_20180402FINAL_HH_V2.txt');
 	*/
@@ -50,7 +50,7 @@ DATA
 	CALL SYMPUT ('EXPORTMLA', 
 		'\\mktg-app01\E\cepps\FBXS\FILEs\2018_04_24\FBCC_20180424.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\cepps\FBXS\FILEs\2018_04_24\FBXS_CC_20180424FINAL_HH.CSV');
+		'\\mktg-app01\E\cepps\FBXS\FILEs\2018_04_24\FBXS_CC_20180424FINAL_HH.csv');
 	CALL SYMPUT ('FINALEXPORTHH', 
 		'\\mktg-app01\E\cepps\FBXS\FILEs\2018_04_24\FBXS_CC_20180424FINAL_HH.txt');
 RUN;
@@ -116,15 +116,15 @@ DATA XS2;
 		LENGTH('applicant SSN'n) - 6), 7);
 
 	*** DROP THE VARIABLES `Application DATE`, `applicant address`,***;
-	*** `applicant address ZIP`, `ApplicANt DOB`, `app. wORk PHONE`***;
+	*** `applicant address ZIP`, `ApplicANt DOB`, `app. wORk phoNE`***;
 	*** FROM NEWXS2 DATASET -------------------------------------- ***;
 	DROP 'Application DATE'n 'applicant address'n
-		'applicant address zip'n 'applicant DOB'n 'app. wORk PHONE'n;
+		'applicant address zip'n 'applicant DOB'n 'app. wORk phone'n;
 
 	*** RENAME THE `application DATE1`, `applicANt email`,         ***;
 	*** `ApplicANt Credit ScORe`, `ApplicANt FIRST NAME`,          ***;
 	*** `ApplicANt LAST NAME`, `ApplicANt SSN`, `ApplicANt Middle  ***;
-	*** NAME`, `app. cell PHONE`, AND `app. home PHONE` VARIABLES  ***;
+	*** NAME`, `app. cell phoNE`, AND `app. home phoNE` VARIABLES  ***;
 	RENAME 
 		'application DATE1'n = 'application DATE'n
 		'applicant email'n = EMAIL 
@@ -133,8 +133,8 @@ DATA XS2;
 		'ApplicANt LAST NAME'n = LASTNAME 
 		'ApplicANt SSN'n = SSNO1
 		'ApplicANt Middle NAME'n = MIDDLENAME 
-		'app. cell PHONE'n = CELLPHONE 
-		'app. home PHONE'n = PHONE;
+		'app. cell phoNE'n = CELLPHONE 
+		'app. home phoNE'n = PHONE;
 RUN;
 
 DATA TCI;
@@ -1640,7 +1640,7 @@ PROC DATASETS;
 	MODIFY MLA;
 	RENAME DOB = "Date of Birth"n 
 		   SSNO1 = "Social Security Number (SSN)"n
-		   LASTNAME = "LASt NAME"n 
+		   LASTNAME = "Last NAME"n 
 		   FIRSTNAME = "First NAME"n 
 		   MIDDLENAME = "Middle NAME"n 
 		   BRACCTNO = "Customer Record ID"n
@@ -1650,7 +1650,7 @@ RUN;
 DATA FINALMLA;
 	LENGTH "Social Security Number (SSN)"n $ 9 
 		   "Date of Birth"n $ 8
-		   "LASt NAME"n $ 26
+		   "Last NAME"n $ 26
 		   "First NAME"n $20
 		   "Middle NAME"n $ 20
 		   "Customer Record ID"n $ 28
@@ -1671,7 +1671,7 @@ DATA _NULL_;
 	FILE "&EXPORTMLA";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
-		@ 18 "LASt NAME"n 
+		@ 18 "Last NAME"n 
 		@ 44 "First NAME"n 
 		@ 64 "Middle NAME"n 
 		@ 84 "Customer Record ID"n
@@ -1813,42 +1813,43 @@ DATA FINALHH4;
 RUN;
 
 *** IF RISK_SEGMENT = "TEST" THEN TEST_CODE = "RATE_TEST"          ***;
-*** ELSE TEST_CODE = "Control" ----------------------------------- ***;
+*** ELSE TEST_CODE = "Control";
 
-PROC SQL;
-	CREATE TABLE FINALHH5 AS
-	SELECT CUSTID, BRANCH, CFNAME1,	CMNAME1, CLNAME1, CADDR1, CADDR2,
-		   CCITY, CST, CZIP, SSN, AMT_GIVEN1, PERCENT,	NUMPYMNTS,
-		   CAMP_TYPE, ORIG_AMTID, FICO, DOB, MLA_STATUS, RISK_SEGMENT,
-		   N_60_DPD, CONPROFILE, BRACCTNO, CIFNO, CAMPAIGN_ID, MGC,
-		   MONTH_SPLIT, MADE_UNMADE, FICO_RANGE_25PT, STATE1,
-		   TEST_CODE, POFFDATE, PHONE, CELLPHONE
-	FROM FINALHH4;
+
+PROC Sql;
+CREATE TABLE FINALHH5 aS
+Select CUSTID, BRANCH, CFNAME1,	CMNAME1, CLNAME1, CADDR1, CADDR2, CCITY, CST, CZIP,	SSN, AMT_GIVEN1, PERCENT,	numpymntS, CAMP_TYPE, ORig_amtid, FICO, DOB, MLA_STATUS, RISK_SEGMENT, N_60_DPD, CONPROFILE, BRACCTNO, CIFNO, CAMPAIGN_ID, MGC, MONTH_SPLIT, MADE_UNMADE, FICO_RANGE_25PT, STATE1, TEST_CODE, POFFDATE, phoNE, cellphoNE
+FROM FINALHH4;
 QUIT;
 RUN;
 
-PROC EXPORT 
-	DATA = FINALHH5 OUTFILE = "&FINALEXPORTHH" DBMS = TAB;
-RUN;
 
-PROC EXPORT 
-	DATA = FINALHH5 OUTFILE = "&FINALEXPORTED" DBMS = CSV;
+PROC EXPORT DATA=FINALHH5 OUTFILE="&FINALEXPORTHH"  DBMS=TAB;
  RUN;
 
-DATA CHECK;
-	SET FINALHH5;
-	IF AMT_GIVEN1 = "";
+ PROC EXPORT DATA=FINALHH5 OUTFILE="&FINALEXPORTED" DBMS=cSv;
+ RUN;
+
+
+
+
+DATA check;
+SET FINALHH5;
+IF AMT_GIVEN1="";
 RUN;
 
-PROC FREQ 
-	DATA = FINALHH5;
-	TABLES RISK_SEGMENT;
+PROC FREQ DATA=FINALHH5;
+TABLES RISK_SEGMENT;
 RUN;
 
-PROC FREQ 
-	DATA = FINALHH5;
-	TABLES MONTH_SPLIT;
+PROC FREQ DATA=FINALHH5;
+TABLES MONTH_SPLIT;
 RUN;
+
+
+
+
+
  
 /*
 DATA NOTEST TEST;
@@ -1856,12 +1857,12 @@ SET FINALHH2;
 IF CST = "AL" & RISK_SEGMENT="A" THEN OUTPUT TEST;
 ELSE OUTPUT NOTEST;
 RUN;
-PROC SurveySELECT DATA=TEST OUT=TEST2 OUTALL rate=.5 method=SrS;
+PROC SurveySelect DATA=TEST OUT=TEST2 OUTALL rate=.5 method=SrS;
 RUN;
 DATA FINALHH3;
 SET NOTEST TEST2;
-IF SELECTed=1 THEN RISK_SEGMENT="TEST";
-IF SELECTed=0 THEN RISK_SEGMENT="A";
+IF Selected=1 THEN RISK_SEGMENT="TEST";
+IF Selected=0 THEN RISK_SEGMENT="A";
 RISK_SEGMENT=STRIP(RISK_SEGMENT);
 RUN;
 PROC FREQ DATA=FINALHH3;
