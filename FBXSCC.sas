@@ -1668,7 +1668,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\cepps\FBXS\FILEs\2018_05_14\MLA_4_4_FBCC_20180424.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_4_FBCC_20180424.txt";
 
 DATA MLA1;
 	INFILE MLA1;
