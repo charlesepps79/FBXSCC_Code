@@ -1769,7 +1769,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_OFFERS - 20180514.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_OFFERS - 20180517.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
