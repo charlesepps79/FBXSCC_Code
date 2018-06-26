@@ -14,33 +14,33 @@
 DATA 
 	_NULL_;
 
-	CALL SYMPUT ('_1DAY','2018-06-05'); /* DAY BEFORE PULL */
-	CALL SYMPUT ('_1MONTH','2018-05-06'); /* 1 MONTH FROM PULL */
-	CALL SYMPUT ('_30MONTH','2015-12-06'); /*30 MONTHS FROM PULL*/
-	CALL SYMPUT('_3YR','2015-06-07'); /* 3 YEARS FROM PULL */
-	CALL SYMPUT('_5YR','2013-06-07'); /* 5 YEARS FROM PULL */
-	CALL SYMPUT ('_15MONTH','2017-03-06'); /*15 MONTHS FROM PULL*/
+	CALL SYMPUT ('_1DAY','2018-06-25'); /* DAY BEFORE PULL */
+	CALL SYMPUT ('_1MONTH','2018-05-26'); /* 1 MONTH FROM PULL */
+	CALL SYMPUT ('_30MONTH','2015-12-26'); /*30 MONTHS FROM PULL*/
+	CALL SYMPUT('_3YR','2015-06-27'); /* 3 YEARS FROM PULL */
+	CALL SYMPUT('_5YR','2013-06-27'); /* 5 YEARS FROM PULL */
+	CALL SYMPUT ('_15MONTH','2017-03-26'); /*15 MONTHS FROM PULL*/
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_6.2_2018');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_6.2_2018');
-	CALL SYMPUT ('FB_ID', 'FB_6.2_2018CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_7.0_2018');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_7.0_2018');
+	CALL SYMPUT ('FB_ID', 'FB_7.0_2018CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
+	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2018\06-June_2018\FBXSCC\FBXS_CC_.20180606FLAGGED.txt');
+		'\\mktg-app01\E\Production\2018\07-July_2018\FBXSCC\FBXS_CC_20180626FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2018\06-June_2018\FBXSCC\FBXS_CC_20180606FINAL.txt');
+		'\\mktg-app01\E\Production\2018\07-July_2018\FBXSCC\FBXS_CC_20180626FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20180606.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20180626.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2018\06-June_2018\FBXSCC\FBXS_CC_20180606FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2018\07-July_2018\FBXSCC\FBXS_CC_20180626FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2018\06-June_2018\FBXSCC\FBXS_CC_20180606FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2018\07-July_2018\FBXSCC\FBXS_CC_20180626FINAL_HH.txt');
 RUN;
 
 *** CHECK THAT MACRO VARIABLES WERE ASSIGNED CORRECTLY ----------- ***;
@@ -49,7 +49,7 @@ RUN;
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2018\06-June_2018\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2018\07-July_2018\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -62,7 +62,7 @@ DATA XS2;
 	*** CREATE `SOURCE` VARIABLE AND ASSIGN `LOAN TYPE = AUTO      ***;
 	*** INDIRECT` AS `TCICENTRAL` OR `LOAN TYPE = RETAIL` AS       ***; 
 	*** `TCIRETAIL` ---------------------------------------------- ***;
-	IF 'Loan Type'n = "AUTO Indirect" THEN SOURCE = "TCICentral";
+	IF 'Loan Type'n = "Auto Indirect" THEN SOURCE = "TCICentral";
 	IF 'Loan Type'n = "Retail" THEN SOURCE = "TCIRetail";
 	IF SOURCE NE "";
 
@@ -1667,7 +1667,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_5_FBCC_20180606.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_5_FBCC_20180626.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1770,7 +1770,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers - 20180606.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers - 20180618.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
