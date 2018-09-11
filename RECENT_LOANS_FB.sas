@@ -1,7 +1,7 @@
 data x;
 	set dw.vw_loan(
 		keep = entdate ssno1 pocd plcd bnkrptdate pldate poffdate);
-	where entdate > "2018-06-24" & 
+	where entdate > "2018-08-11" & 
 		  pocd = "" & 
 		  plcd = "" & 
 		  poffdate = "" & 
@@ -16,7 +16,7 @@ proc sort
 run;
 
 data y; 
-	set WORK.FBXS_CC_20180626FINAL;
+	set WORK.FBXS_CC_20180813FINAL;
 run;
 
 proc sort 
@@ -38,6 +38,6 @@ run;
 
 proc export 
 	data = m 
-	outfile = "\\mktg-app01\E\Production\2018\07-July_2018\FBXSCC\recentopens0705.txt" 
+	outfile = "\\mktg-app01\E\Production\2018\08-August_2018\FBXSCC\recentopens0823.txt" 
 	dbms = tab;
 run;
