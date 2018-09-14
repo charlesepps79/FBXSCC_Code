@@ -14,33 +14,33 @@
 DATA 
 	_NULL_;
 
-	CALL SYMPUT ('_1DAY','2018-08-12'); /* DAY BEFORE PULL */
-	CALL SYMPUT ('_1MONTH','2018-07-13'); /* 1 MONTH FROM PULL */
-	CALL SYMPUT ('_30MONTH','2016-02-12'); /*30 MONTHS FROM PULL*/
-	CALL SYMPUT('_3YR','2015-08-14'); /* 3 YEARS FROM PULL */
-	CALL SYMPUT('_5YR','2013-08-14'); /* 5 YEARS FROM PULL */
-	CALL SYMPUT ('_15MONTH','2017-05-13'); /*15 MONTHS FROM PULL*/
+	CALL SYMPUT ('_1DAY','2018-09-10'); /* DAY BEFORE PULL */
+	CALL SYMPUT ('_1MONTH','2018-08-11'); /* 1 MONTH FROM PULL */
+	CALL SYMPUT ('_30MONTH','2016-03-12'); /*30 MONTHS FROM PULL*/
+	CALL SYMPUT('_3YR','2015-09-12'); /* 3 YEARS FROM PULL */
+	CALL SYMPUT('_5YR','2013-09-12'); /* 5 YEARS FROM PULL */
+	CALL SYMPUT ('_15MONTH','2017-06-11'); /*15 MONTHS FROM PULL*/
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_8.2_2018');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_8.2_2018');
-	CALL SYMPUT ('FB_ID', 'FB_8.2_2018CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_9.2_2018');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_9.2_2018');
+	CALL SYMPUT ('FB_ID', 'FB_9.2_2018CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2018\08-August_2018\FBXSCC\FBXS_CC_20180813FLAGGED.txt');
+		'\\mktg-app01\E\Production\2018\09-September_2018\FBXSCC\FBXS_CC_20180911FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2018\08-August_2018\FBXSCC\FBXS_CC_20180813FINAL.txt');
+		'\\mktg-app01\E\Production\2018\09-September_2018\FBXSCC\FBXS_CC_20180911FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20180813.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20180911.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2018\08-August_2018\FBXSCC\FBXS_CC_20180813FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2018\09-September_2018\FBXSCC\FBXS_CC_20180911FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2018\08-August_2018\FBXSCC\FBXS_CC_20180813FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2018\09-September_2018\FBXSCC\FBXS_CC_20180911FINAL_HH.txt');
 RUN;
 
 *** CHECK THAT MACRO VARIABLES WERE ASSIGNED CORRECTLY ----------- ***;
@@ -49,7 +49,7 @@ RUN;
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2018\08-August_2018\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2018\09-September_2018\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -89,10 +89,17 @@ DATA XS2;
 
 	*** FORMAT `applicANt DOB` AS YYMMDD10 AND STORE IN `DOB`      ***;
 	*** VARIABLE. ------------------------------------------------ ***;
-	DOB = PUT('applicant DOB'n, YYMMDD10.);
+	DOB_1 = input('applicant DOB'n, anydtdte32.);
+	FORMAT DOB_1 yymmdd10.;
+	DOB = PUT(DOB_1, yymmdd10.);
+	/*
+	DOB = PUT('applicant DOB'n, yymmdd10.);
+	*/
 
 	*** FORMAT `application DATE` AS MMDDYY10 -------------------- ***;
-	'application DATE1'n = PUT('application DATE'n, MMDDYY10.);
+	
+	'application DATE1'n = PUT('application DATE'n, mmddyy10.);
+	
 
 	*** CONCATENATE "TCI" TO `Application NUMBER` AND STORE AS     ***;
 	*** `BRACCTNO` VARIABLE -------------------------------------- ***;
@@ -1671,7 +1678,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_6_FBCC_20180813.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_6_FBCC_20180911.txt";
 
 DATA MLA1;
 	INFILE MLA1;
