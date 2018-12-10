@@ -46,9 +46,9 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_10.0_2018');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_10.0_2018');
-	CALL SYMPUT ('FB_ID', 'FB_10.0_2018CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_12.0_2018');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_12.0_2018');
+	CALL SYMPUT ('FB_ID', 'FB_12.0_2018CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
 	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
@@ -56,21 +56,21 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2018\10-October_2018\FBXSCC\FBXS_CC_20181002FLAGGED.txt');
+		'\\mktg-app01\E\Production\2018\12-December_2018\FBXSCC\FBXS_CC_20181119FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2018\10-October_2018\FBXSCC\FBXS_CC_20181002FINAL.txt');
+		'\\mktg-app01\E\Production\2018\12-December_2018\FBXSCC\FBXS_CC_20181119FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20181002.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20181119.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2018\10-October_2018\FBXSCC\FBXS_CC_20181002FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2018\12-December_2018\FBXSCC\FBXS_CC_20181119FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2018\10-October_2018\FBXSCC\FBXS_CC_20181002FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2018\12-December_2018\FBXSCC\FBXS_CC_20181119FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2018\10-October_2018\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2018\12-December_2018\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -197,7 +197,8 @@ DATA XS_L;
 		POFFDATE = ""  & 
 		BNKRPTDATE = "" & 
 		CLASSID IN (10,19,20,31,34) & 
-		OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX", "VA");
+		OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX", "VA", 
+				  "MO", "WI");
 	
 	*** CREATE `SS7BRSTATE` VARIABLE ----------------------------- ***;
 	SS7BRSTATE = CATS(SSNO1_RT7, SUBSTR(OWNBR, 1, 2)); 
@@ -394,10 +395,10 @@ DATA XS_TOTAL;
 		THEN OFFER_SEGMENT = "ITA";
 	IF STATE IN ("GA", "VA") 
 		THEN OFFER_SEGMENT = "ITA";
-	IF STATE IN ("SC","TX","TN","AL","OK","NM") & 
+	IF STATE IN ("SC","TX","TN","AL","OK","NM", "MO", "WI") & 
 	   SOURCE_2 = "AUTO" 
 		THEN OFFER_SEGMENT = "ITA";
-	IF STATE IN ("SC","NC","TX","TN","AL","OK","NM") & 
+	IF STATE IN ("SC","NC","TX","TN","AL","OK","NM", "MO", "WI") & 
 	   SOURCE_2 = "RETAIL" & 
 	   RISK_SEGMENT = "624 AND BELOW" 
 		THEN OFFER_SEGMENT = "ITA";
@@ -422,7 +423,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 	WHERE POFFDATE BETWEEN "&_15MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
-					"VA"); /* PAID OUT LOANS */
+					"VA", "MO", "WI"); /* PAID OUT LOANS */
 	SS7BRSTATE = CATS(SSNO1_RT7, SUBSTR(OWNBR, 1, 2));
 	LOANDATE_SAS = INPUT(STRIP('LOANDATE'n), yymmdd10.);
 	FORMAT LOANDATE_SAS yymmdd10.;
@@ -923,13 +924,15 @@ DATA MERGED_L_B2;
 
 	*** FLAG INCOMPLETE DOB -------------------------------------- ***;
 	IF DOB = "" THEN NULLDOB_FLAG = "X";
-	IF OWNBR IN ("600" , "9000" , "198" , "1",
-				 "0001" , "0198" , "0600") THEN BADBRANCH_FLAG="X";
+	IF OWNBR IN ("1", "0001", "198", "0198", "198", "0198", "498", 
+				 "0498", "580", "0580", "600", "0600", "698", "0698", 
+				 "898", "0898", "9000", "9000") 
+		THEN BADBRANCH_FLAG = "X";
 	IF SUBSTR(OWNBR, 3, 2) = "99" THEN BADBRANCH_FLAG = "X";
 	
 	*** FIND STATES OUTSIDE OF FOOTPRINT ------------------------- ***;
-	IF STATE NOT IN ("AL", "GA", "NC", "NM", "OK",
-					 "SC", "TN", "TX", "VA") THEN OOS_FLAG = "X";
+	IF STATE NOT IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX", 
+					 "VA", "MO", "WI") THEN OOS_FLAG = "X";
 	
 	*** FLAG CONFIDENTIAL ---------------------------------------- ***;
 	IF CONFIDENTIAL = "Y" THEN DNS_DNH_FLAG = "X"; 
@@ -1643,10 +1646,69 @@ PROC EXPORT
 	DATA = FINAL OUTFILE = "&FINALEXPORTDROPPED" DBMS = TAB REPLACE;
 RUN;
 
+*** SEND TO DOD -------------------------------------------------- ***;
+DATA MLA;
+	SET FINAL;
+	KEEP SSNO1 DOB LASTNAME FIRSTNAME MIDDLENAME BRACCTNO;
+	LASTNAME = compress(LASTNAME,"ABCDEFGHIJKLMNOPQRSTUVWXYZ " , "kis");
+	MIDDLENAME = compress(MIDDLENAME,"ABCDEFGHIJKLMNOPQRSTUVWXYZ " , "kis");
+	FIRSTNAME = compress(FIRSTNAME,"ABCDEFGHIJKLMNOPQRSTUVWXYZ " , "kis");
+	SSNO1 = compress(SSNO1,"1234567890 " , "kis");
+	DOB = compress(DOB,"1234567890 " , "kis");
+	if DOB = ' ' then DOB = "00000000";
+RUN;
+
+DATA MLA;
+	SET MLA;
+	IDENTIFIER = "S";
+RUN;
+
+PROC DATASETS;
+	MODIFY MLA;
+	RENAME DOB = "Date of Birth"n 
+		   SSNO1 = "Social Security Number (SSN)"n
+		   LASTNAME = "Last NAME"n 
+		   FIRSTNAME = "First NAME"n 
+		   MIDDLENAME = "Middle NAME"n 
+		   BRACCTNO = "Customer Record ID"n
+		   IDENTIFIER = "Person Identifier CODE"n;
+RUN;
+
+DATA FINALMLA;
+	LENGTH "Social Security Number (SSN)"n $ 9 
+		   "Date of Birth"n $ 8
+		   "Last NAME"n $ 26
+		   "First NAME"n $20
+		   "Middle NAME"n $ 20
+		   "Customer Record ID"n $ 28
+		   "Person Identifier CODE"n $ 1;
+	SET MLA;
+RUN;
+
+PROC PRINT 
+	DATA = FINALMLA(OBS = 10);
+RUN;
+
+PROC CONTENTS
+	DATA = FINALMLA;
+RUN;
+
+DATA _NULL_;
+	SET FINALMLA;
+	FILE "&EXPORTMLA";
+	PUT @ 1 "Social Security Number (SSN)"n 
+		@ 10 "Date of Birth"n 
+		@ 18 "Last NAME"n 
+		@ 44 "First NAME"n 
+		@ 64 "Middle NAME"n 
+		@ 84 "Customer Record ID"n
+		@ 112 "Person Identifier CODE"n;
+RUN;
+
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_7_FBCC_20181002.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_7_FBCC_20181119.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1687,7 +1749,7 @@ PROC FREQ
 	TABLE MLA_STATUS / NOCUM NOPERCENT;
 RUN;
 
-DATA FINALHH2;
+DATA FINALHH1;
 	LENGTH FICO_RANGE_25PT $10 CAMPAIGN_ID $25 MADE_UNMADE $15
 		   CIFNO $20 CUSTID $20 MGC $20 STATE1 $5 TEST_CODE $20;
 	SET FINALHH;
@@ -1730,10 +1792,53 @@ DATA FINALHH2;
 		IF OWNST = "TX" AND 
 		   SERCHG = 100 AND 
 		   TILA_LNAMT > 1380 AND 
-		   MOS_ON_BOOKS < 11 THEN RISK_SEGMENT = "AT";
+		   MOS_ON_BOOKS < 12 THEN RISK_SEGMENT = "AT";
 	END;
 
 RUN;
+
+**********************************************************************;
+*********************************TEST*********************************;
+**********************************************************************;
+
+*** Create suppression filter for texas loans -------------------- ***;
+DATA TX_LOAN; /* FROM LOAN TABLE FOR FB */
+	SET dw.vw_loan_nlS (
+		KEEP = CIFNO LOANDATE OWNST SERCHG TILA_LNAMT);
+	WHERE SERCHG = 100 & 
+		  TILA_LNAMT > 1380 & 
+		  OWNST IN ("TX");
+	LOANDATE_SAS = INPUT(STRIP('LOANDATE'n), yymmdd10.);
+	FORMAT LOANDATE_SAS yymmdd10.;
+	DAYS_ON_BOOKS = TODAY() - LOANDATE_SAS;
+	MOS_ON_BOOKS = ROUND(DAYS_ON_BOOKS / 30, 1.0);
+	IF MOS_ON_BOOKS > 12 THEN DELETE;
+	CIFNO_MATCH = 0;
+	CIFNO_MATCH = CIFNO;
+	DROP LOANDATE OWNST SERCHG TILA_LNAMT LOANDATE_SAS DAYS_ON_BOOKS 
+		 MOS_ON_BOOKS;
+RUN;
+
+PROC SORT 
+	DATA = FINALHH1; 
+	BY CIFNO; 
+RUN;
+
+PROC SORT 
+	DATA = TX_LOAN NODUPKEY; 
+	BY CIFNO; 
+RUN;
+
+DATA FINALHH2;
+	MERGE FINALHH1(IN = x) TX_LOAN(IN = y);
+	BY CIFNO;
+	IF x = 1;
+	IF CIFNO_MATCH > 0 THEN RISK_SEGMENT = "AT";
+RUN;
+
+**********************************************************************;
+*********************************TEST*********************************;
+**********************************************************************;
 
 DATA FINALHH2;
 	SET FINALHH2;
@@ -1753,7 +1858,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20180917.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20181116.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -1786,11 +1891,11 @@ RUN;
 PROC Sql;
 	CREATE TABLE FINALHH5 aS
 	Select CUSTID, BRANCH, CFNAME1,	CMNAME1, CLNAME1, CADDR1, CADDR2,
-		   CCITY, CST, CZIP,	SSN, AMT_GIVEN1, PERCENT, numpymntS,
+		   CCITY, CST, CZIP, SSN, AMT_GIVEN1, PERCENT, numpymntS,
 		   CAMP_TYPE, ORig_amtid, FICO, DOB, MLA_STATUS, RISK_SEGMENT, 
 		   N_60_DPD, CONPROFILE, BRACCTNO, CIFNO, CAMPAIGN_ID, MGC,
 		   MONTH_SPLIT, MADE_UNMADE, FICO_RANGE_25PT, STATE1,
-		   TEST_CODE, POFFDATE, phoNE, cellphoNE
+		   TEST_CODE, POFFDATE, phoNE, cellphoNE, SUFFIX
 	FROM FINALHH4;
 QUIT;
 RUN;
