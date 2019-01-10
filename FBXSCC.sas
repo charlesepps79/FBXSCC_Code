@@ -46,31 +46,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_1.1_2019');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_1.1_2019');
-	CALL SYMPUT ('FB_ID', 'FB_1.1_2019CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_1.2_2019');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_1.2_2019');
+	CALL SYMPUT ('FB_ID', 'FB_1.2_2019CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
+	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2019\01_JAN_2019\FBXSCC\FBXS_CC_20181213FLAGGED.txt');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2019\01_JAN_2019\FBXSCC\FBXS_CC_20181213FINAL.txt');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20181213.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20190109.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2019\01_JAN_2019\FBXSCC\FBXS_CC_20181213FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2019\01_JAN_2019\FBXSCC\FBXS_CC_20181213FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2019\01_JAN_2019\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -921,6 +921,8 @@ DATA MERGED_L_B2;
 	IF STATE = "" THEN MISSINGINFO_FLAG = "X"; 
 	IF FIRSTNAME = "" THEN MISSINGINFO_FLAG = "X";   
 	IF LASTNAME = "" THEN MISSINGINFO_FLAG = "X";
+	IF LASTNAME = "NULL" THEN MISSINGINFO_FLAG = "X";
+	IF ZIP = "" THEN MISSINGINFO_FLAG = "X";
 
 	*** FLAG INCOMPLETE DOB -------------------------------------- ***;
 	IF DOB = "" THEN NULLDOB_FLAG = "X";
@@ -1708,7 +1710,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_7_FBCC_20181213.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_7_FBCC_20190109.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1858,7 +1860,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20181213.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190108.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
