@@ -46,25 +46,25 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_1.2_2019');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_1.2_2019');
-	CALL SYMPUT ('FB_ID', 'FB_1.2_2019CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_2.0_2019');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_2.0_2019');
+	CALL SYMPUT ('FB_ID', 'FB_2.0_2019CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FLAGGED.txt');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FINAL.txt');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20190109.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20190205.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190109FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
@@ -1710,7 +1710,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_7_FBCC_20190109.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_8_FBCC_20190205.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1799,10 +1799,6 @@ DATA FINALHH1;
 
 RUN;
 
-**********************************************************************;
-*********************************TEST*********************************;
-**********************************************************************;
-
 *** Create suppression filter for texas loans -------------------- ***;
 DATA TX_LOAN; /* FROM LOAN TABLE FOR FB */
 	SET dw.vw_loan_nlS (
@@ -1813,7 +1809,7 @@ DATA TX_LOAN; /* FROM LOAN TABLE FOR FB */
 	LOANDATE_SAS = INPUT(STRIP('LOANDATE'n), yymmdd10.);
 	FORMAT LOANDATE_SAS yymmdd10.;
 	DAYS_ON_BOOKS = TODAY() - LOANDATE_SAS;
-	MOS_ON_BOOKS = ROUND(DAYS_ON_BOOKS / 30, 1.0);
+	MOS_ON_BOOKS = ROUND(DAYS_ON_BOOKS / 30, 0.01);
 	IF MOS_ON_BOOKS > 12 THEN DELETE;
 	CIFNO_MATCH = 0;
 	CIFNO_MATCH = CIFNO;
@@ -1839,11 +1835,54 @@ DATA FINALHH2;
 RUN;
 
 **********************************************************************;
-*********************************TEST*********************************;
+********************************TEST**********************************;
+**********************************************************************;
+
+data partial;
+	SET DW.VW_PAYMENT(
+		keep = TRCD BRACCTNO);
+	where TRCD = 'PX';
+RUN;
+
+PROC SORT 
+	DATA = partial; 
+	BY bracctno; 
+RUN;
+
+data LOAN;
+	SET DW.VW_LOAN(
+		keep = CIFNO orgbr poffdate BRACCTNO OWNBR POCD PLCD OWNST);
+RUN;
+
+PROC SORT 
+	DATA = LOAN; 
+	BY BRACCTNO; 
+RUN;
+
+DATA SETTLED;
+	MERGE PARTIAL(IN = INPART) loan(IN = INLOAN);  
+	BY BRACCTNO;  
+	IF INPART AND INLOAN;
+run;
+
+PROC SORT 
+	DATA = FINALHH2; 
+	BY BRACCTNO; 
+RUN;
+
+DATA FINALHH3;
+	MERGE FINALHH2(IN = x) partial(IN = y);
+	BY BRACCTNO;
+	IF x = 1;
+	IF TRCD = 'PX' THEN DELETE;
+RUN;
+
+**********************************************************************;
+********************************TEST**********************************;
 **********************************************************************;
 
 DATA FINALHH2;
-	SET FINALHH2;
+	SET FINALHH3;
 	RENAME OWNBR = BRANCH
 		   FIRSTNAME = CFNAME1
 		   MIDDLENAME = CMNAME1
