@@ -46,31 +46,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_2.0_2019');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_2.0_2019');
-	CALL SYMPUT ('FB_ID', 'FB_2.0_2019CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_3.0_2019');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_3.0_2019');
+	CALL SYMPUT ('FB_ID', 'FB_3.0_2019CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
+	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FLAGGED.txt');
+		'\\mktg-app01\E\Production\2019\03_MAR_2019\FBXSCC\FBXS_CC_20190227FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FINAL.txt');
+		'\\mktg-app01\E\Production\2019\03_MAR_2019\FBXSCC\FBXS_CC_20190227FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20190205.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20190227.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2019\03_MAR_2019\FBXSCC\FBXS_CC_20190227FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\FBXS_CC_20190205FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2019\03_MAR_2019\FBXSCC\FBXS_CC_20190227FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2019\02_FEB_2019\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2019\03_MAR_2019\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -1038,8 +1038,11 @@ PROC SORT
 RUN;
 
 DATA ATB;
-	SET dw.ATB_DATA(
-		KEEP = BRACCTNO AGE2 YEARMONTH);
+	SET dw.vw_AgedTrialBalance(
+		KEEP = LoanNumber Age2 BOM);
+	AGE2 = Age2;
+	YEARMONTH = BOM;
+	BRACCTNO = LoanNumber;
 	POACCTNO = BRACCTNO * 1;
 	ATBDT = INPUT(SUBSTR(YEARMONTH, 6, 2) || '/' ||
 				  SUBSTR(YEARMONTH, 9, 2) || '/' ||
@@ -1164,9 +1167,12 @@ RUN;
 **********************************************************************;
 
 DATA ATB; 
-	SET dw.ATB_DATA(
-		KEEP=BRACCTNO AGE2 YEARMONTH 
-		WHERE=(YEARMONTH between "&_30MONTH" AND "&_1DAY"));
+	SET dw.vw_AgedTrialBalance(
+		KEEP=LoanNumber Age2 BOM 
+		WHERE=(BOM between "&_30MONTH" AND "&_1DAY"));
+	BRACCTNO = LoanNumber;
+	AGE2 = Age2;
+	YEARMONTH = BOM;
 RUN;
 
 PROC SORT 
@@ -1710,7 +1716,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_8_FBCC_20190205.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_8_FBCC_20190227.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1899,7 +1905,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190108.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190226.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
