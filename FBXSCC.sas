@@ -1,5 +1,6 @@
-﻿OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
-
+﻿/*
+OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
+/*
 %LET PULLDATE = %SYSFUNC(today(), yymmdd10.);
 %PUT "&PULLDATE";
 
@@ -26,6 +27,17 @@
 %LET _15MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-456);
 %LET _15MONTH = %SYSFUNC(putn(&_15MONTH_NUM,yymmdd10.));
 %PUT "&_15MONTH";
+*/
+
+DATA 
+	_NULL_;
+	CALL SYMPUT ('_1DAY','2019-04-23'); /* DAY BEFORE PULL */
+	CALL SYMPUT ('_1MONTH','2019-03-25'); /* 1 MONTH FROM PULL */
+	CALL SYMPUT ('_30MONTH','2016-10-23'); /*30 MONTHS FROM PULL*/
+	CALL SYMPUT ('_3YR','2016-04-24'); /* 3 YEARS FROM PULL */
+	CALL SYMPUT ('_5YR','2014-04-25'); /* 5 YEARS FROM PULL */
+	CALL SYMPUT ('_15MONTH','2018-01-14'); /*15 MONTHS FROM PULL*/
+RUN;
 
 %PUT "&_1DAY" "&_1MONTH" "&_30MONTH" "&_3YR" "&_5YR" "&_15MONTH";
 
@@ -46,31 +58,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_4.0_2019');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_4.0_2019');
-	CALL SYMPUT ('FB_ID', 'FB_4.0_2019CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_5.1_2019');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_5.1_2019');
+	CALL SYMPUT ('FB_ID', 'FB_5.1_2019CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
+	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2019\04_APR_2019\FBXSCC\FBXS_CC_20190327FLAGGED.txt');
+		'\\mktg-app01\E\Production\2019\05_MAY_2019\FBXSCC\FBXS_CC_20190424FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2019\04_APR_2019\FBXSCC\FBXS_CC_20190327FINAL.txt');
+		'\\mktg-app01\E\Production\2019\05_MAY_2019\FBXSCC\FBXS_CC_20190424FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20190327.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20190424.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2019\04_APR_2019\FBXSCC\FBXS_CC_20190327FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2019\05_MAY_2019\FBXSCC\FBXS_CC_20190424FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2019\04_APR_2019\FBXSCC\FBXS_CC_20190327FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2019\05_MAY_2019\FBXSCC\FBXS_CC_20190424FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2019\04_APR_2019\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2019\05_MAY_2019\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -967,9 +979,11 @@ DATA MERGED_L_B2;
 	XNO_TRUEDUEDATE2 = INPUT(SUBSTR(XNO_TRUEDUEDATE, 6, 2) || '/' || 
 							 SUBSTR(XNO_TRUEDUEDATE, 9, 2) || '/' || 
 							 SUBSTR(XNO_TRUEDUEDATE, 1, 4), mmddyy10.);
+	FORMAT XNO_TRUEDUEDATE2 mmddyy10.;
 	FIRSTPYDATE2 = INPUT(SUBSTR(FIRSTPYDATE, 6, 2) || '/' || 
 						 SUBSTR(FIRSTPYDATE, 9, 2) || '/' ||
 						 SUBSTR(FIRSTPYDATE, 1, 4), mmddyy10.);
+	FORMAT FIRSTPYDATE2 mmddyy10.;
 	PMT_DAYS = XNO_TRUEDUEDATE2 - FIRSTPYDATE2;
 	IF PMT_DAYS < 60 THEN LESSTHAN2_FLAG = "X";
 	IF PMT_DAYS = . & _9S < 10 THEN LESSTHAN2_FLAG = "";
@@ -1021,12 +1035,15 @@ DATA TEMP;
 		KEEP = BRACCTNO SRCD ENTDATE POFFDATE POCD CLASSTRANSLATION
 			   LNAMT CONPROFILE1 BRTRFFG SSNO1_RT7 
 		WHERE = (POCD = '13' AND POFFDATE > "&_15MONTH"));
+	
 	ENTDT = INPUT(SUBSTR(ENTDATE, 6, 2) || '/' || 
 				  SUBSTR(ENTDATE, 9, 2) || '/' ||
 				  SUBSTR(ENTDATE, 1, 4), mmddyy10.);
+	format ENTDT mmddyy10.;
 	PODT = INPUT(SUBSTR(POFFDATE, 6, 2) || '/' ||
 				 SUBSTR(POFFDATE, 9, 2) || '/' ||
 				 SUBSTR(POFFDATE, 1, 4), mmddyy10.);
+	format PODT mmddyy10.;
 	IF POFFDATE > "&_1DAY" THEN DELETE;
 	IF PUT(ENTDT, yymmn6.) = PUT(PODT, yymmn6.) THEN DELETE;
 	DROP POFFDATE ENTDATE POCD SRCD;
@@ -1044,9 +1061,11 @@ DATA ATB;
 	YEARMONTH = BOM;
 	BRACCTNO = LoanNumber;
 	POACCTNO = BRACCTNO * 1;
+	
 	ATBDT = INPUT(SUBSTR(YEARMONTH, 6, 2) || '/' ||
 				  SUBSTR(YEARMONTH, 9, 2) || '/' ||
 				  SUBSTR(YEARMONTH, 1, 4), mmddyy10.);
+	format ATBDT mmddyy10.;
 	IF AGE2 =: '1' THEN AGE2 = '1.Current';
 	KEEP ATBDT AGE2 BRACCTNO;
 RUN;
@@ -1158,8 +1177,9 @@ RUN;
 DATA FBWITHDLQ; *MERGE PULL AND DQL INFORMATION;
 	MERGE FB(IN = x) FBDLQ(IN = y);
 	BY BRACCTNO;
-	IF x = 1;
+	IF y = x;
 RUN;
+
 **********************************************************************;
 **********************************************************************;
 **********************************************************************;
@@ -1201,9 +1221,11 @@ DATA ATB;
 	ATBDT = INPUT(SUBSTR(YEARMONTH, 6, 2) || '/' ||
 				  SUBSTR(YEARMONTH, 9, 2) || '/' ||
 				  SUBSTR(YEARMONTH, 1, 4), mmddyy10.);
+	FORMAT ATBDT mmddyy10.;
 	PODT = INPUT(SUBSTR(POFFDATE, 6, 2) || '/' ||
 				 SUBSTR(POFFDATE, 9, 2) || '/' ||
 				 SUBSTR(POFFDATE, 1, 4), mmddyy10.);
+	FORMAT PODT mmddyy10.;
 	AGE_OPEN = INTCK('MONTH', ATBDT, "&SySDATE"d);
 	AGE_CLOSED = INTCK('MONTH', ATBDT, PODT);
 	CD = SUBSTR(AGE2, 1, 1) * 1;
@@ -1657,13 +1679,14 @@ RUN;
 *** SEND TO DOD -------------------------------------------------- ***;
 DATA MLA;
 	SET FINAL;
-	KEEP SSNO1 DOB LASTNAME FIRSTNAME MIDDLENAME BRACCTNO;
+	KEEP SSNO1 DOB LASTNAME FIRSTNAME MIDDLENAME BRACCTNO SSNO1_A;
 	LASTNAME = compress(LASTNAME,"ABCDEFGHIJKLMNOPQRSTUVWXYZ " , "kis");
 	MIDDLENAME = compress(MIDDLENAME,"ABCDEFGHIJKLMNOPQRSTUVWXYZ " , "kis");
 	FIRSTNAME = compress(FIRSTNAME,"ABCDEFGHIJKLMNOPQRSTUVWXYZ " , "kis");
-	SSNO1 = compress(SSNO1,"1234567890 " , "kis");
+	SSNO1_A = compress(SSNO1,"1234567890" , "ki");
+	SSNO1 = put(input(SSNO1_A,best9.),z9.);
 	DOB = compress(DOB,"1234567890 " , "kis");
-	if DOB = ' ' then DOB = "00000000";
+	if DOB = ' ' then delete;
 RUN;
 
 DATA MLA;
@@ -1703,7 +1726,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "&EXPORTMLA";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20190424.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1716,7 +1739,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_8_FBCC_20190327.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_9_FBCC_20190424.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1905,7 +1928,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190327.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190417.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
