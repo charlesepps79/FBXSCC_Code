@@ -1,7 +1,7 @@
 ﻿%LET FINAL_HH_IMPORT = 
-"\\mktg-app01\E\Production\2018\06-June_2018\FBXSCC\FBXS_CC_20180606FINAL_HH.txt";
+"\\mktg-app01\E\Production\2019\07_JULY_2019\FBXSCC\FBXS_CC_20190702FINAL_HH.txt";
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2018\06-June_2018\FBXSCC\FBXS_CC_20180606FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2019\07_JULY_2019\FBXSCC\FBXS_CC_20190702FINAL_HH_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
