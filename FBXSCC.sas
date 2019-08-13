@@ -1,35 +1,4 @@
-/*
-OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
-/*
-%LET PULLDATE = %SYSFUNC(today(), yymmdd10.);
-%PUT "&PULLDATE";
-
-%LET _1DAY_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1);
-%LET _1DAY = %SYSFUNC(putn(&_1DAY_NUM,yymmdd10.));
-%PUT "&_1DAY";
-
-%LET _1MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-30);
-%LET _1MONTH = %SYSFUNC(putn(&_1MONTH_NUM,yymmdd10.));
-%PUT "&_1MONTH";
-
-%LET _30MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-913);
-%LET _30MONTH = %SYSFUNC(putn(&_30MONTH_NUM,yymmdd10.));
-%PUT "&_30MONTH";
-
-%LET _3YR_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1095);
-%LET _3YR = %SYSFUNC(putn(&_3YR_NUM,yymmdd10.));
-%PUT "&_3YR";
-
-%LET _5YR_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1825);
-%LET _5YR = %SYSFUNC(putn(&_5YR_NUM,yymmdd10.));
-%PUT "&_5YR";
-
-%LET _15MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-456);
-%LET _15MONTH = %SYSFUNC(putn(&_15MONTH_NUM,yymmdd10.));
-%PUT "&_15MONTH";
-*/
-
-DATA 
+﻿DATA 
 	_NULL_;
 	CALL SYMPUT ('_1DAY','2019-07-25'); /* DAY BEFORE PULL */
 	CALL SYMPUT ('_1MONTH','2019-06-25'); /* 1 MONTH FROM PULL */
@@ -63,7 +32,7 @@ DATA
 	CALL SYMPUT ('FB_ID', 'FB_8.0_2019CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
+	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
@@ -1018,6 +987,35 @@ DATA MERGED_L_B2;
 	IF OWNBR = "0668" THEN OWNBR = "0680";
 RUN;
 
+**********************************************************************;
+**********************************************************************;
+**********************************************************************;
+data MERGED_L_B2;
+	SET MERGED_L_B2;
+	FULLADDRESS = catx(',', ADR1, ADR2, CITY, STATE, ZIP);
+run;
+
+PROC SORT 
+	DATA = MERGED_L_B2;
+	BY descending CRSCORE descending CURBAL descending POffDate;
+RUN;
+
+PROC SORT 
+	DATA = MERGED_L_B2;
+	BY FULLADDRESS;
+RUN;
+
+data MERGED_L_B2;
+	SET MERGED_L_B2;
+	by FULLADDRESS; 
+	DUPADDRESS_FLAG = 'X';
+	if first.FULLADDRESS then DUPADDRESS_FLAG = ''; 
+run;
+
+**********************************************************************;
+**********************************************************************;
+**********************************************************************;
+
 *** PULL AND MERGE DLQ INFO FOR FB'S ----------------------------- ***;
 PROC FORMAT;
 	VALUE CDFMT 1 = 'Current' 
@@ -1455,6 +1453,7 @@ DATA WATERFALL;
 	DELETE DELINQUENT RENEWAL,
 	DELETE PLAMT GREATER THAN $0,	
 	HEAVY HARVEY EXCLUSIONS (27 BRANCHES),
+	DELETE DUPLICATE ADDRESSES,
 	;
 RUN;
 
@@ -1681,6 +1680,15 @@ PROC SQL; /* COUNT OBS */
 	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
 QUIT;
 
+DATA FINAL; 
+	SET FINAL; 
+	IF DUPADDRESS_FLAG = ""; 
+RUN;
+
+PROC SQL; /* COUNT OBS */ 
+	INSERT INTO COUNT SELECT COUNT(*) AS COUNT FROM FINAL; 
+QUIT;
+
 PROC PRINT 
 	DATA = COUNT NOOBS; /* PRINT FINAL COUNT TABLE */
 RUN;
@@ -1764,7 +1772,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_4_9_FBCC_20190702.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_0_FBCC_20190726.txt";
 
 DATA MLA1;
 	INFILE MLA1;
