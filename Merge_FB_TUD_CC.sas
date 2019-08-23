@@ -1,9 +1,9 @@
 ﻿%LET FINAL_FB_HH_IMPORT = 
-"\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\FBXS_CC_20190820FINAL_HH.txt";
+"\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\FBXS_CC_20190823FINAL_HH.txt";
 %LET FINAL_MO_HH_IMPORT = 
-"\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190820FINAL_HH.txt";
+"\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FINAL_HH.txt";
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\FBMO_CC_20190820FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\FBMO_CC_20190823FINAL_HH_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -18,7 +18,7 @@ run;
 
 data _null_;
 	call symput("importMO",
-		"WORK.MOCC_20190820FINAL_HH");
+		"WORK.MOCC_20190823FINAL_HH");
 run;
 
 data FINAL_FB_HH;

@@ -21,15 +21,15 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190820FLAGGED.txt');
+		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190820FINAL.txt');
+		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20190820.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20190823.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190820FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190820FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FINAL_HH.txt');
 RUN;
 
 Proc SQL;
@@ -47,7 +47,7 @@ Proc SQL;
 		   A.street_address1, A.city, A.zip, A.ssn, A.dob
 	FROM DW.vw_AppData A
 	where A.ApplicationEnterDateOnly BETWEEN 
-		  '2019-07-14' AND '2019-08-14';
+		  '2019-07-16' AND '2019-08-16';
 RUN;
 
 PROC SORT;  
@@ -293,11 +293,6 @@ DATA FINAL_MOCC2;
 	RENAME APR = PERCENT;
 RUN;
 
-*** EXPORT FINAL FILE -------------------------------------------- ***;
-PROC EXPORT 
-	DATA = FINAL_MOCC2 OUTFILE = "&FINALEXPORTDROPPED" DBMS = TAB REPLACE;
-RUN;
-
 *** SEND TO DOD -------------------------------------------------- ***;
 DATA MLA;
 	SET FINAL_MOCC2;
@@ -433,6 +428,65 @@ DATA FINALHH1;
 	CONPROFILE1 = '';
 RUN;
 
+**********************************************************************;
+********************************* TEST *******************************;
+**********************************************************************;
+
+*** IDENTIFY IF CUSTOMER CURRENTLY HAS AN OPEN LOAN FOR MOCC ----- ***;
+DATA OPENLOANS;
+	SET dw.vw_loan(
+		KEEP = SSNO1 SSNO2 SSNO1_RT7 POCD PLCD POFFDATE PLDATE 
+			   BNKRPTDATE);
+	WHERE POCD = "" & 
+		  PLCD = "" & 
+		  POFFDATE = "" & 
+		  PLDATE = "" & 
+		  BNKRPTDATE = "";
+RUN;
+
+DATA SSNO2S;
+	SET OPENLOANS;
+	IF SSNO2 NE "";
+	SSNO1 = SSNO2;
+RUN;
+
+DATA OPENLOANS1;
+	SET OPENLOANS SSNO2S;
+RUN;
+
+DATA OPENLOANS1;
+	SET OPENLOANS1;
+	OPEN_FLAG = "X";
+	DROP POCD PLCD POFFDATE PLDATE BNKRPTDATE SSNO2;
+RUN;
+
+PROC SORT 
+	DATA = OPENLOANS1 NODUPKEY;
+	BY SSNO1;
+RUN;
+
+PROC SORT 
+	DATA = FINALHH1;
+	BY SSNO1;
+RUN;
+
+DATA FINALHH1;
+	MERGE FINALHH1(IN = x) OPENLOANS1;
+	BY SSNO1;
+	IF x;
+	*IF customerelig = "" THEN DELETE;
+	*IF OPEN_FLAG = "X" THEN DELETE;
+RUN;
+
+*** EXPORT FINAL FILE -------------------------------------------- ***;
+PROC EXPORT 
+	DATA = FINALHH1 OUTFILE = "&FINALEXPORTDROPPED" DBMS = TAB REPLACE;
+RUN;
+
+**********************************************************************;
+********************************* TEST *******************************;
+**********************************************************************;
+
 DATA FINALHH2;
 	SET FINALHH1;
 	RENAME BRANCH = BRANCH
@@ -452,6 +506,8 @@ DATA FINALHH2;
 		   PHONE = '';
 		   POFFDATE = '';
 		   SUFFIX = '';
+		   IF customerelig = "" THEN DELETE;
+		   IF OPEN_FLAG = "X" THEN DELETE;
 RUN;
 
 *** IF RISK_SEGMENT = "TEST" THEN TEST_CODE = "RATE_TEST"          ***;
