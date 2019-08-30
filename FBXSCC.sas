@@ -213,18 +213,18 @@ DATA BORRNLS;
 	*** FIND ALL INSTANCES OF "JR" IN `FNAME`. REMOVE "JR" FROM    ***;
 	*** STRING AND STORE AS `FIRSTNAME`. STORE ALL OCCURENCES OF   ***;
 	*** "JR" IN NEW VARIABLE, `SUFFIX` --------------------------- ***;
-	IF FIND(FNAME, "JR") GE 1 THEN DO;
-		FIRSTNAME = COMPRESS(FNAME, "JR");
-		SUFFIX = "JR";
-	END;
+	if find(fname, " JR") ge 1 then do;
+		firstname = tranwrd(fname, "JR", "");
+		suffix = "JR";
+	end;
 	
 	*** FIND ALL INSTANCES OF "SR" IN `FNAME`. REMOVE "SR" FROM    ***;
 	*** STRING AND STORE AS `FIRSTNAME`. STORE ALL OCCURENCES OF   ***;
 	*** "SR" IN NEW VARIABLE, `SUFFIX` --------------------------- ***;
-	IF FIND(FNAME, "SR") GE 1 THEN DO;
-		FIRSTNAME = COMPRESS(FNAME, "SR");
-		SUFFIX = "SR";
-	END;
+	if find(fname, " SR") ge 1 then do;
+		firstname = tranwrd(fname, "SR", "");
+		suffix = "SR";
+	end;
 	
 	*** IF `SUFFIX` IS NULL, TAKE 1ST WORD IN `FNAME` AND STORE AS ***;
 	*** `FIRSTNAME`. TAKE 2ND, 3RD, AND 4TH WORDS IN `FNAME` AND   ***;
