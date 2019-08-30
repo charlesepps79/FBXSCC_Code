@@ -506,7 +506,6 @@ DATA FINALHH2;
 		   PHONE = '';
 		   POFFDATE = '';
 		   SUFFIX = '';
-		   IF customerelig = "" THEN DELETE;
 		   IF OPEN_FLAG = "X" THEN DELETE;
 RUN;
 
