@@ -16,20 +16,20 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('TUD_ID', 'MOCC_9.0_2019');
+	CALL SYMPUT ('TUD_ID', 'MOCC_10.1_2019');
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FLAGGED.txt');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FINAL.txt');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20190823.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20190916.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2019\09_SEPTEMBER_2019\FBXSCC\MOCC_20190823FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FINAL_HH.txt');
 RUN;
 
 Proc SQL;
@@ -264,7 +264,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190820.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190916.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -343,7 +343,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20190821.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20190916.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
