@@ -47,7 +47,7 @@ Proc SQL;
 		   A.street_address1, A.city, A.zip, A.ssn, A.dob
 	FROM DW.vw_AppData A
 	where A.ApplicationEnterDateOnly BETWEEN 
-		  '2019-07-16' AND '2019-08-16';
+		  '2019-07-16' AND '2019-07-16';
 RUN;
 
 PROC SORT;  
