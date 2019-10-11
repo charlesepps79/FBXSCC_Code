@@ -16,20 +16,20 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('TUD_ID', 'MOCC_10.1_2019');
+	CALL SYMPUT ('TUD_ID', 'MOCC_10.2_2019');
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FLAGGED.txt');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20191010FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FINAL.txt');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20191010FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20190916.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20191010.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20191010FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20190916FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\MOCC_20191010FINAL_HH.txt');
 RUN;
 
 Proc SQL;
@@ -47,7 +47,7 @@ Proc SQL;
 		   A.street_address1, A.city, A.zip, A.ssn, A.dob
 	FROM DW.vw_AppData A
 	where A.ApplicationEnterDateOnly BETWEEN 
-		  '2019-07-16' AND '2019-07-16';
+		  '2019-09-09' AND '2019-10-10';
 RUN;
 
 PROC SORT;  
@@ -163,7 +163,7 @@ DATA APPS(
 	ApplicationEnterDate = MDY(APPMM, APPDAY, APPYR);
 
    *IF '30jun2019'd < ApplicationEnterDate < '01aug2019'd;
-	IF '08jul2019'd < ApplicationEnterDate < '09aug2019'd;
+	IF '09sep2019'd < ApplicationEnterDate < '10oct2019'd;
 
 	*** CLEAN UP SOME BAD STATE FORMATS -------------------------- ***;
 	IF STATE IN ('AL' 'OK' 'NM' 'NC' 'GA' 'TN' 'MO' 'WI' 'SC' 'TX' 'VA' 
@@ -264,7 +264,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20190916.xlSx" 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSCC_Offers -20191010.xlSx" 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -343,7 +343,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20190916.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20191010.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -356,7 +356,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_0_MOCC_20190821.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_1_MOCC_20191010.txt";
 
 DATA MLA1;
 	INFILE MLA1;
