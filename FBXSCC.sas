@@ -908,7 +908,7 @@ DATA MERGED_L_B2;
 	*** FLAG INCOMPLETE DOB -------------------------------------- ***;
 	IF DOB = "" THEN NULLDOB_FLAG = "X";
 	IF OWNBR IN ("1", "0001", "198", "0198", "398", "0398", "498", 
-				 "0498", "580", "0580", "600", "0600", "698", "0698", 
+				 "0498", "600", "0600", "698", "0698", 
 				 "898", "0898", "9000", "9000") 
 		THEN BADBRANCH_FLAG = "X";
 	IF SUBSTR(OWNBR, 3, 2) = "99" THEN BADBRANCH_FLAG = "X";
