@@ -1,7 +1,7 @@
 ﻿%LET FINAL_HH_IMPORT = 
-"\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\FBXS_CC_20191010FINAL_HH.txt";
+"\\mktg-app01\E\Production\2019\11_NOVEMBER_2019\FBXSCC\FBXS_CC_20191101FINAL_HH.txt";
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2019\10_OCTOBER_2019\FBXSCC\FBXS_CC_20191010FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2019\11_NOVEMBER_2019\FBXSCC\FBXS_CC_20191101FINAL_HH_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -11,7 +11,7 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20191010FINAL_HH");
+		"WORK.FBXS_CC_20191101FINAL_HH");
 run;
 
 data FINAL_HH;
@@ -92,10 +92,10 @@ DATA TEST_SAMPLE;
 	END;
 
 	IF Selected = 1 & orig_amtid = 704 THEN DO;
-		orig_amtid = 725;
+		orig_amtid = 800;
 		Risk_Segment = 'AB';
 		amt_given1 = 1800.00;
-		percent = 0.59990;
+		percent = 0.6498;
 		numpymnts = 22;
 	END;
 
