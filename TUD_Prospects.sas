@@ -246,7 +246,7 @@ DATA INELIG;
 	SET APPS;
 	WHERE SUBSTR(REASON, 1, 2) = '9.'; 
 	IF  TotalTradeLines < 2 THEN DELETE;
-	IF DateFiled NE '.' AND DateFiled < '20Aug2017'd then delete;
+	IF DateFiled NE '.' AND DateFiled < '01Nov2017'd then delete;
 RUN;
 
 DATA FINAL_MOCC;
