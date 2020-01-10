@@ -1,12 +1,31 @@
-﻿DATA 
-	_NULL_;
-	CALL SYMPUT ('_1DAY','2019-12-12'); /* DAY BEFORE PULL */
-	CALL SYMPUT ('_1MONTH','2019-11-12'); /* 1 MONTH FROM PULL */
-	CALL SYMPUT ('_30MONTH','2017-06-13'); /*30 MONTHS FROM PULL*/
-	CALL SYMPUT ('_3YR','2016-12-13'); /* 3 YEARS FROM PULL */
-	CALL SYMPUT ('_5YR','2014-12-14'); /* 5 YEARS FROM PULL */
-	CALL SYMPUT ('_15MONTH','2018-09-12'); /*15 MONTHS FROM PULL*/
-RUN;
+﻿OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
+
+%LET PULLDATE = %SYSFUNC(today(), yymmdd10.);
+%PUT "&PULLDATE";
+
+%LET _1DAY_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1);
+%LET _1DAY = %SYSFUNC(putn(&_1DAY_NUM,yymmdd10.));
+%PUT "&_1DAY";
+
+%LET _1MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-30);
+%LET _1MONTH = %SYSFUNC(putn(&_1MONTH_NUM,yymmdd10.));
+%PUT "&_1MONTH";
+
+%LET _30MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-913);
+%LET _30MONTH = %SYSFUNC(putn(&_30MONTH_NUM,yymmdd10.));
+%PUT "&_30MONTH";
+
+%LET _3YR_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1095);
+%LET _3YR = %SYSFUNC(putn(&_3YR_NUM,yymmdd10.));
+%PUT "&_3YR";
+
+%LET _5YR_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-1825);
+%LET _5YR = %SYSFUNC(putn(&_5YR_NUM,yymmdd10.));
+%PUT "&_5YR";
+
+%LET _15MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-456);
+%LET _15MONTH = %SYSFUNC(putn(&_15MONTH_NUM,yymmdd10.));
+%PUT "&_15MONTH";
 
 %PUT "&_1DAY" "&_1MONTH" "&_30MONTH" "&_3YR" "&_5YR" "&_15MONTH";
 
@@ -27,25 +46,25 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_1.1_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_1.1_2020');
-	CALL SYMPUT ('FB_ID', 'FB_1.1_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_1.2_2020');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_1.2_2020');
+	CALL SYMPUT ('FB_ID', 'FB_1.2_2020CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20191213FLAGGED.txt');
+		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20200109FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20191213FINAL.txt');
+		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20200109FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20191213.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200109.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20191213FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20200109FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20191213FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2020\01_January_2020\FBXSCC\FBXS_CC_20200109FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
@@ -1759,7 +1778,8 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20191213.txt";
+	FILE &EXPORTMLA;
+	/*FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200109.txt";*/
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1772,7 +1792,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_2_FBCC_20191213.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_3_FBCC_20200109.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1961,7 +1981,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20191030.xlSx" /*"Change12132019"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20191030.xlSx" /*"Change01092020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
