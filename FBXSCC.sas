@@ -27,7 +27,12 @@
 %LET _15MONTH = %SYSFUNC(putn(&_15MONTH_NUM,yymmdd10.));
 %PUT "&_15MONTH";
 
-%PUT "&_1DAY" "&_1MONTH" "&_30MONTH" "&_3YR" "&_5YR" "&_15MONTH";
+%LET _18MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-548);
+%LET _18MONTH = %SYSFUNC(putn(&_18MONTH_NUM,yymmdd10.));
+%PUT "&_18MONTH";
+
+%PUT "&_1DAY" "&_1MONTH" "&_30MONTH" "&_3YR" "&_5YR" "&_15MONTH" 
+	 "&_18MONTH";
 
 **********************************************************************;
 *** IMPORT NEW CROSS SELL FILES. --------------------------------- ***;
@@ -1778,8 +1783,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE &EXPORTMLA;
-	/*FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200109.txt";*/
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200109.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
