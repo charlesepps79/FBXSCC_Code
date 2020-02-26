@@ -1,7 +1,7 @@
 ﻿/*%LET FINAL_HH_IMPORT = 
 "\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\FBXS_CC_20200203FINAL_HH.txt";*/
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\FBXS_CC_20200203FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBXS_CC_20200225FINAL_HH_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -11,13 +11,15 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20200203FINAL_HH");
+		"WORK.FBXS_CC_20200225FINAL_HH");
 run;
 
 data FINAL_HH;
 	*** BranchNumber as string, checknumber as string ------------ ***;
 	set &importfile; 
 	if length(SSN) lt 7 then SSN = cats(repeat('0',7-1-length(SSN)),SSN);
+	IF CAMP_TYPE = "XS" AND orig_amtid = 662
+		THEN DELETE;
 run;
 
 /*
@@ -81,8 +83,7 @@ DATA TEST_SAMPLE;
 		percent = 0.4078;
 		numpymnts = 15;
 	END;
-	*/
-
+	
 	IF Selected = 1 & orig_amtid = 708 THEN DO;
 		orig_amtid = 726;
 		Risk_Segment = 'AB';
@@ -91,20 +92,21 @@ DATA TEST_SAMPLE;
 		numpymnts = 20;
 	END;
 
-	IF Selected = 1 & orig_amtid = 704 THEN DO;
-		orig_amtid = 800;
-		Risk_Segment = 'AB';
-		amt_given1 = 1800.00;
-		percent = 0.6498;
-		numpymnts = 22;
-	END;
-
 	IF Selected = 1 & orig_amtid = 745 THEN DO;
 		orig_amtid = 727;
 		Risk_Segment = 'AB';
 		amt_given1 = 1800.00;
 		percent = 0.35950;
 		numpymnts = 20;
+	END;
+	*/
+
+	IF Selected = 1 & orig_amtid = 704 THEN DO;
+		orig_amtid = 800;
+		Risk_Segment = 'AB';
+		amt_given1 = 1800.00;
+		percent = 0.6498;
+		numpymnts = 22;
 	END;
 RUN;
 
@@ -125,8 +127,8 @@ PROC SQL;
 		   camp_type, orig_amtid, fico, DOB, mla_status, Risk_Segment,
 		   n_60_dpd, ConProfile, BrAcctNo, cifno, campaign_id, mgc,
 		   month_split, Made_Unmade, fico_range_25pt, state1, 
-		   test_code, POffDate, Phone, CellPhone, suffix, RECENTPYOUT, 
-		   CAD_OFFER
+		   test_code, POffDate, Phone, CellPhone, suffix/*, RECENTPYOUT, 
+		   CAD_OFFER*/
 	FROM TEST_SAMPLE;
 QUIT;
 RUN;
