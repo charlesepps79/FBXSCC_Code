@@ -59,31 +59,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_2.1_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_2.1_2020');
-	CALL SYMPUT ('FB_ID', 'FB_2.1_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_3.1_2020');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_3.1_2020');
+	CALL SYMPUT ('FB_ID', 'FB_3.1_2020CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\36_Month_Test\FBXS_CC_36MONTHTESTFLAGGED.txt');
+		'\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBXS_CC_20200225FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\36_Month_Test\FBXS_CC_36MONTHTESTFINAL.txt');
+		'\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBXS_CC_20200225FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_36MONTHTEST.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200225.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\36_Month_Test\FBXS_CC_36MONTHTESTFINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBXS_CC_20200225FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\36_Month_Test\FBXS_CC_36MONTHTESTFINAL_HH.txt');
+		'\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBXS_CC_20200225FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\36_Month_Test\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -433,7 +433,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 			   XNO_TRUEDUEDATE FIRSTPYDATE SRCD POCD POFFDATE PLCD
 			   PLDATE PLAMT BNKRPTDATE BNKRPTCHAPTER DATEPAIDLAST
 			   APRATE CRSCORE CURBAL SERCHG TILA_LNAMT);
-	WHERE POFFDATE BETWEEN "&_36MONTH" AND "&_1DAY" & 
+	WHERE POFFDATE BETWEEN "&_24MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
 					"VA", "MO", "WI"); /* PAID OUT LOANS */
@@ -1070,7 +1070,7 @@ DATA TEMP;
 	SET dw.vw_loan(
 		KEEP = BRACCTNO SRCD ENTDATE POFFDATE POCD CLASSTRANSLATION
 			   LNAMT CONPROFILE1 BRTRFFG SSNO1_RT7 
-		WHERE = (POCD = '13' AND POFFDATE > "&_36MONTH"));
+		WHERE = (POCD = '13' AND POFFDATE > "&_24MONTH"));
 	
 	ENTDT = INPUT(SUBSTR(ENTDATE, 6, 2) || '/' || 
 				  SUBSTR(ENTDATE, 9, 2) || '/' ||
@@ -1796,7 +1796,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_36MONTHTEST.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200225.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1805,7 +1805,7 @@ DATA _NULL_;
 		@ 84 "Customer Record ID"n
 		@ 112 "Person Identifier CODE"n;
 RUN;
-
+/*
 *** MLA Fake Return -------------------------------------------------- ***;
 DATA MLA;
 	SET FINAL;
@@ -1860,7 +1860,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_3_FBCC_36MONTHTEST.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_3_FBCC_20200225.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1870,11 +1870,11 @@ DATA _NULL_;
 		@ 112 "Person Identifier CODE"n
 		@ 122 "MLA DOD"n;
 RUN;
-
+*/
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_3_FBCC_36MONTHTEST.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_3_FBCC_20200225.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1945,7 +1945,7 @@ DATA FINALHH1;
 	IF CAMP_TYPE = "FB" THEN CAMPAIGN_ID = "&FB_ID";
 	IF POFFDATE > "&_1MONTH" THEN RECENTPYOUT = "YES";
 	ELSE RECENTPYOUT = "NO";
-	*IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
+	IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
 	CUSTID = STRIP(_N_);
 
 	IF CAMP_TYPE = "FB" THEN DO;
@@ -2063,7 +2063,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200217.xlSx" /*"Change02032020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200217.xlSx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -2086,24 +2086,24 @@ DATA FINALHH4;
 	MERGE FINALHH2(IN = x) OFFERS;
 	BY CST RISK_SEGMENT;
 	IF x;
-	IF NetLoanAmount >= 5000 AND ClassTranslation = "Large" 
+	*IF NetLoanAmount >= 5000 AND ClassTranslation = "Large" 
 		THEN CAD_OFFER = 5000;
-	IF NetLoanAmount < 5000 AND ClassTranslation = "Large" 
+	*IF NetLoanAmount < 5000 AND ClassTranslation = "Large" 
 		THEN CAD_OFFER = 4000;
-	IF ClassTranslation = "Small" 
+	*IF ClassTranslation = "Small" 
 		THEN CAD_OFFER = 2400;
-	IF ClassTranslation = "Checks" 
+	*IF ClassTranslation = "Checks" 
 		THEN CAD_OFFER = 2400;
-	IF ClassTranslation = "Small" AND OWNST = "GA"
+	*IF ClassTranslation = "Small" AND OWNST = "GA"
 		THEN CAD_OFFER = 1400;
-	IF ClassTranslation = "Checks" AND OWNST = "GA"
+	*IF ClassTranslation = "Checks" AND OWNST = "GA"
 		THEN CAD_OFFER = 1400;
-	IF ClassTranslation = "Small" AND OWNST = "OK"
+	*IF ClassTranslation = "Small" AND OWNST = "OK"
 		THEN CAD_OFFER = 1200;
-	IF ClassTranslation = "Checks" AND OWNST = "OK"
+	*IF ClassTranslation = "Checks" AND OWNST = "OK"
 		THEN CAD_OFFER = 1200;
 	FORMAT AMT_GIVEN1 DOllar10.2;
-	FORMAT CAD_OFFER DOllar10.2;
+	*FORMAT CAD_OFFER DOllar10.2;
 	RENAME APR = PERCENT;
 RUN;
 
@@ -2117,8 +2117,8 @@ PROC Sql;
 		   CAMP_TYPE, ORig_amtid, FICO, DOB, MLA_STATUS, RISK_SEGMENT, 
 		   N_60_DPD, CONPROFILE, BRACCTNO, CIFNO, CAMPAIGN_ID, MGC,
 		   MONTH_SPLIT, MADE_UNMADE, FICO_RANGE_25PT, STATE1,
-		   TEST_CODE, POFFDATE, phoNE, cellphoNE, SUFFIX, RECENTPYOUT, 
-		   CAD_OFFER
+		   TEST_CODE, POFFDATE, phoNE, cellphoNE, SUFFIX/*, RECENTPYOUT, 
+		   CAD_OFFER*/
 	FROM FINALHH4;
 QUIT;
 RUN;
