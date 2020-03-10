@@ -31,7 +31,7 @@ DATA
 	CALL SYMPUT ('FINALEXPORTHH', 
 		'\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\MOCC_20200225FINAL_HH.txt');
 RUN;
-
+***30 days from one week ago***;
 Proc SQL;
 	Create Table AppTableQuery as
 	SELECT A.AppType, A.task_refno, A.CustomerElig, A.CustomerEligDate,
@@ -47,7 +47,7 @@ Proc SQL;
 		   A.street_address1, A.city, A.zip, A.ssn, A.dob
 	FROM DW.vw_AppData A
 	where A.ApplicationEnterDateOnly BETWEEN 
-		  '2020-02-04' AND '2020-02-25';
+		  '2020-01-26' AND '2020-02-25';
 RUN;
 
 PROC SORT;  
@@ -163,7 +163,7 @@ DATA APPS(
 	ApplicationEnterDate = MDY(APPMM, APPDAY, APPYR);
 
    *IF '30jun2019'd < ApplicationEnterDate < '01aug2019'd;
-	IF '04feb2020'd < ApplicationEnterDate < '25feb2020'd;
+	IF '26jan2020'd < ApplicationEnterDate < '25feb2020'd;
 
 	*** CLEAN UP SOME BAD STATE FORMATS -------------------------- ***;
 	IF STATE IN ('AL' 'OK' 'NM' 'NC' 'GA' 'TN' 'MO' 'WI' 'SC' 'TX' 'VA' 
