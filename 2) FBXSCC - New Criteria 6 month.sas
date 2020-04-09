@@ -39,8 +39,12 @@ OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 %LET _36MONTH = %SYSFUNC(putn(&_36MONTH_NUM,yymmdd10.));
 %PUT "&_36MONTH";
 
+%LET _6MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-183);
+%LET _6MONTH = %SYSFUNC(putn(&_6MONTH_NUM,yymmdd10.));
+%PUT "&_6MONTH";
+
 %PUT "&_1DAY" "&_1MONTH" "&_30MONTH" "&_3YR" "&_5YR" "&_15MONTH" 
-	 "&_18MONTH";
+	 "&_18MONTH" "&_6MONTH";
 
 **********************************************************************;
 *** IMPORT NEW CROSS SELL FILES. --------------------------------- ***;
@@ -59,31 +63,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_4.1_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_4.1_2020');
-	CALL SYMPUT ('FB_ID', 'FB_4.1_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_4.2_2020');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_4.2_2020');
+	CALL SYMPUT ('FB_ID', 'FB_4.2_2020CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FLAGGED.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200407FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FINAL.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200407FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200317.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200407.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200407FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200407FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\XS_Mail_Pull_blank.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -433,7 +437,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 			   XNO_TRUEDUEDATE FIRSTPYDATE SRCD POCD POFFDATE PLCD
 			   PLDATE PLAMT BNKRPTDATE BNKRPTCHAPTER DATEPAIDLAST
 			   APRATE CRSCORE CURBAL SERCHG TILA_LNAMT);
-	WHERE POFFDATE BETWEEN "&_24MONTH" AND "&_1DAY" & 
+	WHERE POFFDATE BETWEEN "&_6MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
 					"VA", "MO", "WI"); /* PAID OUT LOANS */
@@ -1022,6 +1026,8 @@ DATA MERGED_L_B2;
 	IF "&_30MONTH" <= POFFDATE < "&_24MONTH" THEN _30MTH_SWAPIN = "X";
 	IF "&_36MONTH" <= POFFDATE < "&_30MONTH" THEN _36MTH_SWAPIN = "X";
 	IF PURCD = "011" THEN PURCD_SWAPIN = "X";
+	IF CAMP_TYPE = "XS" THEN DELETE;
+	IF OWNST = "NM" THEN DELETE;
 RUN;
 
 **********************************************************************;
@@ -1435,7 +1441,7 @@ RUN;
 DATA MERGED_L_B2; /* FLAG FOR BAD DLQATB */
 	SET MERGED_L_B2;
 	*IF TIMES30 = "." THEN TIMES30 = 0;
-	IF RECENT3 > 1 OR RECENT6 >2 OR LAST12 > 3 OR LAST12_60 > 1 OR 
+	IF RECENT3 > 0 OR RECENT6 >1 OR LAST12 > 3 OR LAST12_60 > 1 OR 
 	   RECENT6_60 > 0 THEN DLQ_FLAG = "X";
 	IF CAMP_TYPE = "XS" & LAST12_60 > 0 THEN DLQ_FLAG = "X";
  	IF TIMES30 = "." AND CAMP_TYPE = "FB" THEN DLQ_FLAG = "X"; 
@@ -1796,7 +1802,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200317.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200407.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1874,7 +1880,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_3_FBCC_20200317.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_4_FBCC_20200407.txt";
 
 DATA MLA1;
 	INFILE MLA1;
