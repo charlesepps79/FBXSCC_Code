@@ -1,7 +1,7 @@
 ﻿/*%LET FINAL_HH_IMPORT = 
 "\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\FBXS_CC_20200203FINAL_HH.txt";*/
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2020\04_April_2020\\FBXSCC\FBXS_CC_20200317FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2020\04_April_2020\\FBXSCC\FBXS_CC_20200414FINAL_HH_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -11,7 +11,7 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20200317FINAL_HH");
+		"WORK.FBXS_CC_20200414FINAL_HH");
 run;
 
 data FINAL_HH;
@@ -107,6 +107,14 @@ DATA TEST_SAMPLE;
 		amt_given1 = 1800.00;
 		percent = 0.6498;
 		numpymnts = 22;
+	END;
+
+	IF orig_amtid = "" THEN DO;
+		orig_amtid = 662;
+		Risk_Segment = 'AT';
+		amt_given1 = 2400.00;
+		percent = 0.30030;
+		numpymnts = 24;
 	END;
 RUN;
 
