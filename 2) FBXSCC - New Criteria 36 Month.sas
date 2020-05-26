@@ -1,4 +1,4 @@
-OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
+﻿OPTIONS MPRINT MLOGIC SYMBOLGEN; /* SET DEBUGGING OPTIONS */
 
 %LET PULLDATE = %SYSFUNC(today(), yymmdd10.);
 %PUT "&PULLDATE";
@@ -59,31 +59,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_4.1_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_4.1_2020');
-	CALL SYMPUT ('FB_ID', 'FB_4.1_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_4.2_2020');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_4.2_2020');
+	CALL SYMPUT ('FB_ID', 'FB_4.2_2020CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FLAGGED.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FINAL.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200317.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200414.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200317FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\XS_Mail_Pull_blank.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -433,7 +433,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 			   XNO_TRUEDUEDATE FIRSTPYDATE SRCD POCD POFFDATE PLCD
 			   PLDATE PLAMT BNKRPTDATE BNKRPTCHAPTER DATEPAIDLAST
 			   APRATE CRSCORE CURBAL SERCHG TILA_LNAMT);
-	WHERE POFFDATE BETWEEN "&_24MONTH" AND "&_1DAY" & 
+	WHERE POFFDATE BETWEEN "&_MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
 					"VA", "MO", "WI"); /* PAID OUT LOANS */
@@ -998,8 +998,9 @@ DATA MERGED_L_B2;
 		LESSTHAN2_FLAG = ""; /*MAKE SURE FB FLAG IS SET TO NULL */
 	END;
 
-	IF PURCD IN ("020", "015", "016", "021") 
+	IF PURCD IN ("020", "015", "016", "021", "022") 
 		THEN DLQREN_FLAG = "X";
+
 	IF OWNBR = "0251" THEN OWNBR = "0580";
 	IF OWNBR = "0252" THEN OWNBR = "0683";
 	IF OWNBR = "0253" THEN OWNBR = "0581";
@@ -1017,11 +1018,41 @@ DATA MERGED_L_B2;
 	IF OWNBR = "1003" AND ZIP =: "87112" THEN OWNBR = "1013";
 	IF OWNBR = "0872" THEN OWNBR = "0807";
 	IF OWNBR = "0668" THEN OWNBR = "0680";
+
 	IF "&_18MONTH" <= POFFDATE < "&_15MONTH" THEN _18MTH_SWAPIN = "X";
 	IF "&_24MONTH" <= POFFDATE < "&_18MONTH" THEN _24MTH_SWAPIN = "X";
 	IF "&_30MONTH" <= POFFDATE < "&_24MONTH" THEN _30MTH_SWAPIN = "X";
 	IF "&_36MONTH" <= POFFDATE < "&_30MONTH" THEN _36MTH_SWAPIN = "X";
 	IF PURCD = "011" THEN PURCD_SWAPIN = "X";
+	
+	/*COVID*/
+	/*
+	IF CAMP_TYPE = "XS" THEN DELETE;
+	IF OWNST = "NM" THEN DELETE;
+	*/
+	/*Tiger King Branches*/
+	IF OWNBR = "0415" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0504" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0518" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0521" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0537" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0585" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0586" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0589" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0904" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0910" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0915" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0917" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0918" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0921" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0923" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1001" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1002" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1007" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1010" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1011" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1012" THEN offer_type = "Branch ITA";
+	IF OWNBR = "1014" THEN offer_type = "Branch ITA";
 RUN;
 
 **********************************************************************;
@@ -1070,7 +1101,7 @@ DATA TEMP;
 	SET dw.vw_loan(
 		KEEP = BRACCTNO SRCD ENTDATE POFFDATE POCD CLASSTRANSLATION
 			   LNAMT CONPROFILE1 BRTRFFG SSNO1_RT7 
-		WHERE = (POCD = '13' AND POFFDATE > "&_24MONTH"));
+		WHERE = (POCD = '13' AND POFFDATE > "&_36MONTH"));
 	
 	ENTDT = INPUT(SUBSTR(ENTDATE, 6, 2) || '/' || 
 				  SUBSTR(ENTDATE, 9, 2) || '/' ||
@@ -1247,7 +1278,7 @@ RUN;
 DATA ATB; 
 	SET dw.vw_AgedTrialBalance(
 		KEEP=LoanNumber Age2 BOM 
-		WHERE=(BOM between "&_30MONTH" AND "&_1DAY"));
+		WHERE=(BOM between "&_36MONTH" AND "&_1DAY"));
 	BRACCTNO = LoanNumber;
 	AGE2 = Age2;
 	YEARMONTH = BOM;
@@ -1796,7 +1827,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200317.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200414.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1874,7 +1905,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_3_FBCC_20200317.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_4_FBCC_20200414.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1945,7 +1976,7 @@ DATA FINALHH1;
 	IF CAMP_TYPE = "FB" THEN CAMPAIGN_ID = "&FB_ID";
 	IF POFFDATE > "&_1MONTH" THEN RECENTPYOUT = "YES";
 	ELSE RECENTPYOUT = "NO";
-	IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
+	*IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
 	CUSTID = STRIP(_N_);
 
 	IF CAMP_TYPE = "FB" THEN DO;
@@ -1995,7 +2026,7 @@ DATA FINALHH2;
 	MERGE FINALHH1(IN = x) TX_LOAN(IN = y);
 	BY CIFNO;
 	IF x = 1;
-	IF CIFNO_MATCH > 0 THEN RISK_SEGMENT = "AT";
+	IF CIFNO_MATCH > 0 AND CAMP_TYPE NE "XS" THEN RISK_SEGMENT = "AT";
 RUN;
 
 **********************************************************************;
@@ -2063,7 +2094,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200217.xlSx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200406.xlSx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
