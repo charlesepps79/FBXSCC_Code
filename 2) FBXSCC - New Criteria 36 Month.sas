@@ -59,9 +59,9 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_4.2_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_4.2_2020');
-	CALL SYMPUT ('FB_ID', 'FB_4.2_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_7.1_2020');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_7.1_2020');
+	CALL SYMPUT ('FB_ID', 'FB_7.1_2020CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
 	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
@@ -69,21 +69,21 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FLAGGED.txt');
+		'\\mktg-app01\E\Production\2020\06_June_2020\FBXSCC\FBXS_CC_20200617FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL.txt');
+		'\\mktg-app01\E\Production\2020\06_June_2020\FBXSCC\FBXS_CC_20200617FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200414.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200617.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2020\06_June_2020\FBXSCC\FBXS_CC_20200617FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2020\06_June_2020\FBXSCC\FBXS_CC_20200617FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\XS_Mail_Pull_blank.xlsx" 
+		"\\mktg-app01\E\Production\2020\06_June_2020\FBXSCC\XS_Mail_Pull.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -1031,28 +1031,28 @@ DATA MERGED_L_B2;
 	IF OWNST = "NM" THEN DELETE;
 	*/
 	/*Tiger King Branches*/
-	IF OWNBR = "0415" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0504" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0518" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0521" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0537" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0585" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0586" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0589" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0904" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0910" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0915" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0917" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0918" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0921" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0923" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1001" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1002" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1007" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1010" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1011" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1012" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1014" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0415" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0504" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0518" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0521" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0537" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0585" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0586" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0589" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0904" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0910" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0915" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0917" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0918" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0921" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0923" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1001" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1002" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1007" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1010" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1011" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1012" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1014" THEN BADBRANCH_FLAG = "X";
 RUN;
 
 **********************************************************************;
@@ -1827,7 +1827,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200414.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200617.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1905,7 +1905,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_4_FBCC_20200414.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_5_FBCC_20200617.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1976,7 +1976,7 @@ DATA FINALHH1;
 	IF CAMP_TYPE = "FB" THEN CAMPAIGN_ID = "&FB_ID";
 	IF POFFDATE > "&_1MONTH" THEN RECENTPYOUT = "YES";
 	ELSE RECENTPYOUT = "NO";
-	*IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
+	IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
 	CUSTID = STRIP(_N_);
 
 	IF CAMP_TYPE = "FB" THEN DO;
@@ -2094,7 +2094,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200406.xlSx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200615.xlSx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
