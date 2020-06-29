@@ -59,31 +59,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_4.2_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_4.2_2020');
-	CALL SYMPUT ('FB_ID', 'FB_4.2_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_6.1_2020');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_6.1_2020');
+	CALL SYMPUT ('FB_ID', 'FB_6.1_2020CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
+	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FLAGGED.txt');
+		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL.txt');
+		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200414.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200527.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\FBXS_CC_20200414FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2020\04_April_2020\FBXSCC\XS_Mail_Pull_blank.xlsx" 
+		"\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\XS_Mail_PULL.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -433,7 +433,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 			   XNO_TRUEDUEDATE FIRSTPYDATE SRCD POCD POFFDATE PLCD
 			   PLDATE PLAMT BNKRPTDATE BNKRPTCHAPTER DATEPAIDLAST
 			   APRATE CRSCORE CURBAL SERCHG TILA_LNAMT);
-	WHERE POFFDATE BETWEEN "&_MONTH" AND "&_1DAY" & 
+	WHERE POFFDATE BETWEEN "&_36MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
 					"VA", "MO", "WI"); /* PAID OUT LOANS */
@@ -1827,7 +1827,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200414.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200527.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1905,7 +1905,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_4_FBCC_20200414.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_4_FBCC_20200527.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -2094,7 +2094,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200406.xlSx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200526.xlSx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
