@@ -203,7 +203,7 @@ DATA XS_L;
 	*** ONLY NULLS FROM `BNKRPTDATE`. KEEP RELEVANT `CLASSID`S AND ***;
 	*** `OWNST`S ------------------------------------------------- ***;
 	WHERE CIFNO NE "" & 
-		ENTDATE >= "&_15MONTH" & 
+		ENTDATE >= "&_36MONTH" & 
 		POCD = "" & 
 		PLCD = "" & 
 		PLDATE = "" & 
