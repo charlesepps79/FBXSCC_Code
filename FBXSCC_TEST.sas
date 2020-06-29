@@ -1,7 +1,7 @@
 ﻿/*%LET FINAL_HH_IMPORT = 
-"\\mktg-app01\E\Production\2020\02_February_2020\FBXSCC\FBXS_CC_20200203FINAL_HH.txt";*/
+"\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.txt";*/
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBXS_CC_20200225FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2020\06_June_2020\FBXSCC\FBXS_CC_20200617FINAL_HH_TEST1.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -11,7 +11,7 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20200225FINAL_HH");
+		"WORK.FBXS_CC_20200617FINAL_HH_0000");
 run;
 
 data FINAL_HH;
@@ -108,6 +108,14 @@ DATA TEST_SAMPLE;
 		percent = 0.6498;
 		numpymnts = 22;
 	END;
+
+	IF Selected = 1 & orig_amtid = 651 THEN DO;
+		orig_amtid = 809;
+		Risk_Segment = 'ATT';
+		amt_given1 = 2000.00;
+		percent = 0.43187;
+		numpymnts = 18;
+	END;
 RUN;
 
 /*
@@ -134,9 +142,9 @@ QUIT;
 RUN;
 
 PROC EXPORT 
-	DATA = FINAL_HH_TEST OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB;
+	DATA = FINAL_HH_TEST OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB REPLACE;
 RUN;
-
+/*
 PROC EXPORT 
-	DATA = FINAL_HH OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB;
+	DATA = FINAL_HH OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB REPLACE;
 RUN;
