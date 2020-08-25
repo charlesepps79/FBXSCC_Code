@@ -1,7 +1,7 @@
 ﻿/*%LET FINAL_HH_IMPORT = 
 "\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.txt";*/
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2020\06_June_2020\FBXSCC\FBXS_CC_20200617FINAL_HH_TEST1.txt";
+"\\mktg-app01\E\Production\2020\08_August_2020\FBXSCC\FBXS_CC_20200824FINAL_HH_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -11,7 +11,7 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20200617FINAL_HH_0000");
+		"WORK.FBXS_CC_202000824FINAL_HH;");
 run;
 
 data FINAL_HH;
@@ -99,7 +99,6 @@ DATA TEST_SAMPLE;
 		percent = 0.35950;
 		numpymnts = 20;
 	END;
-	*/
 
 	IF Selected = 1 & orig_amtid = 704 THEN DO;
 		orig_amtid = 800;
@@ -108,6 +107,7 @@ DATA TEST_SAMPLE;
 		percent = 0.6498;
 		numpymnts = 22;
 	END;
+*/
 
 	IF Selected = 1 & orig_amtid = 651 THEN DO;
 		orig_amtid = 809;
@@ -117,8 +117,8 @@ DATA TEST_SAMPLE;
 		numpymnts = 18;
 	END;
 RUN;
-
 /*
+
 DATA TEST_SAMPLE;
 	SET TEST_SAMPLE;
 	new_ssn = put(ssn, 9.);
@@ -136,7 +136,7 @@ PROC SQL;
 		   n_60_dpd, ConProfile, BrAcctNo, cifno, campaign_id, mgc,
 		   month_split, Made_Unmade, fico_range_25pt, state1, 
 		   test_code, POffDate, Phone, CellPhone, suffix/*, RECENTPYOUT, 
-		   CAD_OFFER*/
+		   CAD_OFFER*/,FOOTPRNT /* ADDED THIS VARIABLE FOR 9.1 CAMPAIGN */
 	FROM TEST_SAMPLE;
 QUIT;
 RUN;
