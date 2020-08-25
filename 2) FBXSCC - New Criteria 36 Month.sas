@@ -59,9 +59,9 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_6.1_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_6.1_2020');
-	CALL SYMPUT ('FB_ID', 'FB_6.1_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_9.1_2020');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_9.1_2020');
+	CALL SYMPUT ('FB_ID', 'FB_9.1_2020CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
 	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
@@ -69,21 +69,21 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FLAGGED.txt');
+		'\\mktg-app01\E\Production\2020\08_August_2020\FBXSCC\FBXS_CC_202000824FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL.txt');
+		'\\mktg-app01\E\Production\2020\08_August_2020\FBXSCC\FBXS_CC_202000824FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20200527.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_202000824.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2020\08_August_2020\FBXSCC\FBXS_CC_202000824FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2020\08_August_2020\FBXSCC\FBXS_CC_202000824FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\XS_Mail_PULL.xlsx" 
+		"\\mktg-app01\E\Production\2020\08_August_2020\FBXSCC\XS_Mail_Pull.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -276,7 +276,7 @@ DATA BORRNLS;
 	END;
 	DOB = COMPRESS(AGE, "-"); /* REMOVE HYPHEN, STORE `AGE` AS `DOB` */
 	LASTNAME = LNAME; /* STORE `LNAME` AS `LASTNAME` */
-	DROP FNAME LNAME NWORDS AGE; /* DROP VARIABLES FROM TABLE */
+	*DROP FNAME LNAME NWORDS AGE; /* DROP VARIABLES FROM TABLE */
 	IF CIFNO NE ""; /* FILTER SET OF NULL `CIFNO`S */
 
 	*** STORE `SSNO` AS `SSNO1`. *STORE `SSNO_RT7` AS `SSNO1_RT7`  ***;
@@ -1031,28 +1031,28 @@ DATA MERGED_L_B2;
 	IF OWNST = "NM" THEN DELETE;
 	*/
 	/*Tiger King Branches*/
-	IF OWNBR = "0415" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0504" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0518" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0521" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0537" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0585" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0586" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0589" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0904" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0910" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0915" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0917" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0918" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0921" THEN offer_type = "Branch ITA";
-	IF OWNBR = "0923" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1001" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1002" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1007" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1010" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1011" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1012" THEN offer_type = "Branch ITA";
-	IF OWNBR = "1014" THEN offer_type = "Branch ITA";
+	IF OWNBR = "0415" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0504" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0518" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "0521" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "0537" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0585" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0586" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "0589" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0904" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0910" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0915" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0917" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0918" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0921" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0923" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "1001" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "1002" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1007" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1010" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1011" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "1012" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "1014" THEN BADBRANCH_FLAG = "X";
 RUN;
 
 **********************************************************************;
@@ -1827,7 +1827,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20200527.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_202000824.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1905,7 +1905,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_4_FBCC_20200527.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_5_FBCC_202000824.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1976,7 +1976,7 @@ DATA FINALHH1;
 	IF CAMP_TYPE = "FB" THEN CAMPAIGN_ID = "&FB_ID";
 	IF POFFDATE > "&_1MONTH" THEN RECENTPYOUT = "YES";
 	ELSE RECENTPYOUT = "NO";
-	*IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
+	IF MONTH_SPLIT = "&ODD_EVEN" | RECENTPYOUT = "YES";
 	CUSTID = STRIP(_N_);
 
 	IF CAMP_TYPE = "FB" THEN DO;
@@ -2094,7 +2094,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200526.xlSx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200820.xlSx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -2138,6 +2138,14 @@ DATA FINALHH4;
 	RENAME APR = PERCENT;
 RUN;
 
+/*  The below data set is added to create a new variable FOOTPRNT  on 8/24/2020 for 9.1    */
+
+DATA FINALHH4;
+SET FINALHH4;
+LENGTH FOOTPRNT $4;
+FOOTPRNT='INF';
+RUN;
+
 *** IF RISK_SEGMENT = "TEST" THEN TEST_CODE = "RATE_TEST"          ***;
 *** ELSE TEST_CODE = "Control" ----------------------------------- ***;
 
@@ -2148,18 +2156,17 @@ PROC Sql;
 		   CAMP_TYPE, ORig_amtid, FICO, DOB, MLA_STATUS, RISK_SEGMENT, 
 		   N_60_DPD, CONPROFILE, BRACCTNO, CIFNO, CAMPAIGN_ID, MGC,
 		   MONTH_SPLIT, MADE_UNMADE, FICO_RANGE_25PT, STATE1,
-		   TEST_CODE, POFFDATE, phoNE, cellphoNE, SUFFIX/*, RECENTPYOUT, 
-		   CAD_OFFER*/
+		   TEST_CODE, POFFDATE, phoNE, cellphoNE, SUFFIX, FOOTPRNT
 	FROM FINALHH4;
 QUIT;
 RUN;
 
 PROC EXPORT 
-	DATA = FINALHH5 OUTFILE = "&FINALEXPORTHH"  DBMS = TAB;
+	DATA = FINALHH5 OUTFILE = "&FINALEXPORTHH"  DBMS = TAB REPLACE;
 RUN;
 
 PROC EXPORT 
-	DATA = FINALHH5 OUTFILE = "&FINALEXPORTED" DBMS = cSv;
+	DATA = FINALHH5 OUTFILE = "&FINALEXPORTED" DBMS = cSv REPLACE;
 RUN;
 
 DATA check;
