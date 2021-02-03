@@ -1,7 +1,8 @@
 ﻿/*%LET FINAL_HH_IMPORT = 
-"\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.txt";*/
+"\\mktg-app01\E\Production\2020\05_May_2020\FBXSCC\FBXS_CC_20200527FINAL_HH.txt";
+
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2020\08_August_2020\FBXSCC\FBXS_CC_20200824FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2020\12_December_2020\FBXSCC\FBXS_CC_20201119FINAL_HH_TEST.txt";*/
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -9,16 +10,19 @@
 			   cifno $25 POffDate $10 Phone $40 CellPhone $13;
 %LET FORMATLIST = amt_given1 DOLLAR10.2;
 
+***** In the imported file change SSN to string ****;
+
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_202000824FINAL_HH;");
+		"WORK.FBXS_CC_20210113FINAL_HH"); 
+		
 run;
 
 data FINAL_HH;
 	*** BranchNumber as string, checknumber as string ------------ ***;
 	set &importfile; 
 	if length(SSN) lt 7 then SSN = cats(repeat('0',7-1-length(SSN)),SSN);
-	IF CAMP_TYPE = "XS" AND orig_amtid = 662
+    IF CAMP_TYPE = "XS" AND orig_amtid = 662
 		THEN DELETE;
 run;
 
@@ -136,15 +140,24 @@ PROC SQL;
 		   n_60_dpd, ConProfile, BrAcctNo, cifno, campaign_id, mgc,
 		   month_split, Made_Unmade, fico_range_25pt, state1, 
 		   test_code, POffDate, Phone, CellPhone, suffix/*, RECENTPYOUT, 
-		   CAD_OFFER*/,FOOTPRNT /* ADDED THIS VARIABLE FOR 9.1 CAMPAIGN */
+		   CAD_OFFER*/,FOOTPRNT /* ADDED THIS VARIABLE FROM 9.1 CAMPAIGN */
 	FROM TEST_SAMPLE;
 QUIT;
 RUN;
 
-PROC EXPORT 
-	DATA = FINAL_HH_TEST OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB REPLACE;
+PROC EXPORT DATA=FINAL_HH_TEST 
+OUTFILE ="\\mktg-app01\E\Production\2021\02_February_2021\FBXSCC\FBXS_CC_20210113FINAL_HH_TEST.txt"
+DBMS = TAB REPLACE;
 RUN;
 /*
+
+PROC EXPORT 
+
+	DATA = FINAL_HH_TEST OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB REPLACE;
+RUN;
+
 PROC EXPORT 
 	DATA = FINAL_HH OUTFILE = &FINAL_EXPORT_HH  DBMS = TAB REPLACE;
 RUN;
+
+;

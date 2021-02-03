@@ -59,9 +59,9 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_9.1_2020');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_9.1_2020');
-	CALL SYMPUT ('FB_ID', 'FB_9.1_2020CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_02.1_2021');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_02.1_2021');
+	CALL SYMPUT ('FB_ID', 'FB_02.1_2021CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
 	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
@@ -69,21 +69,21 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2020\09_September_2020\FBXSCC\FBXS_CC_202000825FLAGGED.txt');
+		'\\mktg-app01\E\Production\2021\02_February_2021\FBXSCC\FBXS_CC_20210113FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2020\09_September_2020\FBXSCC\FBXS_CC_202000825FINAL.txt');
+		'\\mktg-app01\E\Production\2021\02_February_2021\FBXSCC\FBXS_CC_20210113FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_202000825.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20210113.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2020\09_September_2020\FBXSCC\FBXS_CC_202000825FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2021\02_February_2021\FBXSCC\FBXS_CC_20210113FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2020\09_September_2020\FBXSCC\FBXS_CC_202000825FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2021\02_February_2021\FBXSCC\FBXS_CC_20210113FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2020\09_September_2020\FBXSCC\XS_Mail_Pull.xlsx" 
+		"\\mktg-app01\E\Production\2021\02_February_2021\FBXSCC\XS_Mail_Pull.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -1030,18 +1030,18 @@ DATA MERGED_L_B2;
 	IF CAMP_TYPE = "XS" THEN DELETE;
 	IF OWNST = "NM" THEN DELETE;
 	*/
-	/*Tiger King Branches*/
+	/*Tiger King Branches    */
 	
-	IF OWNBR = "0504" THEN BADBRANCH_FLAG = "X";
-	IF OWNBR = "0518" THEN BADBRANCH_FLAG = "X";
-	IF OWNBR = "0923" THEN BADBRANCH_FLAG = "X";
-	IF OWNBR = "1010" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0415" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0585" THEN BADBRANCH_FLAG = "X";
 	IF OWNBR = "1011" THEN BADBRANCH_FLAG = "X";
 	IF OWNBR = "1012" THEN BADBRANCH_FLAG = "X";
-	*IF OWNBR = "0415" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "0504" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "0518" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "0923" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "1010" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0521" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0537" THEN BADBRANCH_FLAG = "X";
-	*IF OWNBR = "0585" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0586" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0589" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0904" THEN BADBRANCH_FLAG = "X";
@@ -1053,7 +1053,7 @@ DATA MERGED_L_B2;
 	*IF OWNBR = "1001" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "1002" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "1007" THEN BADBRANCH_FLAG = "X";
-	*IF OWNBR = "1014" THEN BADBRANCH_FLAG = "X";
+	*IF OWNBR = "1014" THEN BADBRANCH_FLAG = "X";  
 RUN;
 
 **********************************************************************;
@@ -1828,7 +1828,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_202000825.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20210113.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1906,7 +1906,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_5_FBCC_202000825.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_6_FBCC_20210113.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -2095,7 +2095,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20200820.xlSx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20210111.xlsx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -2139,7 +2139,7 @@ DATA FINALHH4;
 	RENAME APR = PERCENT;
 RUN;
 
-/*  The below data set is added to create a new variable FOOTPRNT  on 8/24/2020 for 9.1    */
+/*  The below data set is added to create a new variable FOOTPRNT  on 8/24/2020 from 9.1 Campaign   */
 
 DATA FINALHH4;
 SET FINALHH4;
