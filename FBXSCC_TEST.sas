@@ -140,7 +140,7 @@ PROC SQL;
 		   n_60_dpd, ConProfile, BrAcctNo, cifno, campaign_id, mgc,
 		   month_split, Made_Unmade, fico_range_25pt, state1, 
 		   test_code, POffDate, Phone, CellPhone, suffix/*, RECENTPYOUT, 
-		   CAD_OFFER*/,FOOTPRNT /* ADDED THIS VARIABLE FROM 9.1 CAMPAIGN */
+		   CAD_OFFER*/,FOOTPRNT, STATE_MISMATCH_FLAG /* ADDED THIS VARIABLE FROM 9.1 CAMPAIGN */
 	FROM TEST_SAMPLE;
 QUIT;
 RUN;
