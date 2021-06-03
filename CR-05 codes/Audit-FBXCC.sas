@@ -1,9 +1,9 @@
 ﻿
 data _null_;
 	call symput("outfilex",
-		"\\mktg-app01\E\Production\Audits\FBXCC AUDIT - 21.05_02 - Final Mail File.xlsx");
+		"\\mktg-app01\E\Production\Audits\FBXCC AUDIT - 20.02_01 - Final Mail File.xlsx");
 	call symput("importfile",
-		"WORK.'022090A_RMC_FB_XS_LC_Final_Mailf'n;");
+		"WORK.'021710A_RMC_FB_XS_LC_Final_Mailf'n");
 run;
 
 data auditfbxcc;
@@ -29,8 +29,7 @@ TN, 2079900552962,
 TX, 2079900585188,
 VA, 8018017353,
 MO, 8018498710,
-WI, 8018504632,
-IL, 8018245293
+WI, 8018504632
 ;
 run;
 

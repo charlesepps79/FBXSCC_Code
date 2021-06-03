@@ -59,31 +59,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_06.1_2021');
-	CALL SYMPUT ('AUTO_ID', 'AUTOXS_06.1_2021');
-	CALL SYMPUT ('FB_ID', 'FB_06.1_2021CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_03.1_2021');
+	CALL SYMPUT ('AUTO_ID', 'AUTOXS_03.1_2021');
+	CALL SYMPUT ('FB_ID', 'FB_03.1_2021CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2021\07_July_2021\FBXSCC\FBXS_CC_20210527FLAGGED.txt');
+		'\\mktg-app01\E\Production\2021\03_March_2021\FBXSCC\FBXS_CC_20210205FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2021\07_July_2021\FBXSCC\FBXS_CC_20210527FINAL.txt');
+		'\\mktg-app01\E\Production\2021\03_March_2021\FBXSCC\FBXS_CC_20210205FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20210527.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20210205.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2021\07_July_2021\FBXSCC\FBXS_CC_20210527FINAL_HH.cSv');
+		'\\mktg-app01\E\Production\2021\03_March_2021\FBXSCC\FBXS_CC_20210205FINAL_HH.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2021\07_July_2021\FBXSCC\FBXS_CC_20210527FINAL_HH.txt');
+		'\\mktg-app01\E\Production\2021\03_March_2021\FBXSCC\FBXS_CC_20210205FINAL_HH.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2021\07_July_2021\FBXSCC\XS_Mail_Pull.xlsx" 
+		"\\mktg-app01\E\Production\2021\03_March_2021\FBXSCC\XS_Mail_Pull.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -1033,9 +1033,9 @@ DATA MERGED_L_B2;
 	/*Tiger King Branches    */
 	
 	IF OWNBR = "0415" THEN BADBRANCH_FLAG = "X";
+	IF OWNBR = "0504" THEN BADBRANCH_FLAG = "X";
 	IF OWNBR = "1011" THEN BADBRANCH_FLAG = "X";
 	IF OWNBR = "1012" THEN BADBRANCH_FLAG = "X";
-	*IF OWNBR = "0504" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0585" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0518" THEN BADBRANCH_FLAG = "X";
 	*IF OWNBR = "0923" THEN BADBRANCH_FLAG = "X";
@@ -1829,7 +1829,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20210527.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20210205.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1907,7 +1907,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_8_FBCC_20210527.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_7_FBCC_20210205.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -2096,7 +2096,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20210524.xlsx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20210111.xlsx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 

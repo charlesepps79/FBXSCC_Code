@@ -14,7 +14,7 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20210527FINAL_HH"); 
+		"WORK.FBXS_CC_20210205FINAL_HH_0000"); 
 		
 run;
 
@@ -39,7 +39,7 @@ PROC SORT
 	DATA = FINAL_HH;
 	BY orig_amtid;
 RUN;
-/*
+
 PROC SURVEYSELECT 
 	DATA = FINAL_HH SAMPRATE = 0.50 SEED = 3617 
 		OUT = TEST_SAMPLE OUTALL METHOD = SRS NOPRINT;
@@ -48,7 +48,7 @@ RUN;
 
 DATA TEST_SAMPLE;
 	SET TEST_SAMPLE;
-		
+	/*	
 	IF Selected = 1 & orig_amtid = 229 THEN DO;
 		orig_amtid = 702;
 		Risk_Segment = 'AT';
@@ -111,7 +111,7 @@ DATA TEST_SAMPLE;
 		percent = 0.6498;
 		numpymnts = 22;
 	END;
-
+*/
 
 	IF Selected = 1 & orig_amtid = 651 THEN DO;
 		orig_amtid = 809;
@@ -120,7 +120,7 @@ DATA TEST_SAMPLE;
 		percent = 0.43187;
 		numpymnts = 18;
 	END;
-RUN;   */
+RUN;
 /*
 
 DATA TEST_SAMPLE;
@@ -141,12 +141,12 @@ PROC SQL;
 		   month_split, Made_Unmade, fico_range_25pt, state1, 
 		   test_code, POffDate, Phone, CellPhone, suffix/*, RECENTPYOUT, 
 		   CAD_OFFER*/,FOOTPRNT, STATE_MISMATCH_FLAG /* ADDED THIS VARIABLE FROM 9.1 CAMPAIGN */
-	FROM FINAL_HH;
+	FROM TEST_SAMPLE;
 QUIT;
 RUN;
 
 PROC EXPORT DATA=FINAL_HH_TEST 
-OUTFILE ="\\mktg-app01\E\Production\2021\07_July_2021\FBXSCC\FBXS_CC_20210527FINAL_HH_TEST.txt"
+OUTFILE ="\\mktg-app01\E\Production\2021\03_March_2021\FBXSCC\FBXS_CC_20210205FINAL_HH_TEST.txt"
 DBMS = TAB REPLACE;
 RUN;
 /*
