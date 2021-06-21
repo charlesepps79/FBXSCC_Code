@@ -121,6 +121,111 @@ DATA TEST_SAMPLE;
 		numpymnts = 18;
 	END;
 RUN;   */
+
+DATA FINAL_HH;
+	SET FINAL_HH;
+
+	IF CST = 'AL' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2200.00;
+		percent = 0.36980;
+		numpymnts = 24;
+		orig_amtid = 691;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'GA' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 1400.00;
+		percent = 0.40780;
+		numpymnts = 15;
+		orig_amtid = 823;
+		RISK_SEGMENT = '650-750';
+	END;	
+
+	IF CST = 'NC' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2400.00;
+		percent = 0.31120;
+		numpymnts = 24;
+		orig_amtid = 680;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'NM' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2000.00;
+		percent = 0.44990;
+		numpymnts = 24;
+		orig_amtid = 684;
+		RISK_SEGMENT = '650-750';
+	END;	
+
+	IF CST = 'OK' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 1200.00;
+		percent = 0.55190;
+		numpymnts = 15;
+		orig_amtid = 819;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'SC' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2000.00;
+		percent = 0.44000;
+		numpymnts = 24;
+		orig_amtid = 707;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'TN' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2000.00;
+		percent = 0.43192;
+		numpymnts = 20;
+		orig_amtid = 652;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'TX' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2400.00;
+		percent = 0.34550;
+		numpymnts = 24;
+		orig_amtid = 815;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'VA' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2400.00;
+		percent = 0.35990;
+		numpymnts = 24;
+		orig_amtid = 861;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'MO' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2000.00;
+		percent = 0.44990;
+		numpymnts = 24;
+		orig_amtid = 698;
+		RISK_SEGMENT = '650-750';
+	END;
+
+	IF CST = 'WI' & CAMP_TYPE = 'XS' & RISK_SEGMENT = '650-850' 
+		THEN DO;
+		amt_given1 = 2000.00;
+		percent = 0.44990;
+		numpymnts = 24;
+		orig_amtid = 718;
+		RISK_SEGMENT = '650-750';
+	END;
+
+RUN;
+
 /*
 
 DATA TEST_SAMPLE;
