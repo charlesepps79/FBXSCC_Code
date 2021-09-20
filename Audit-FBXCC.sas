@@ -1,9 +1,9 @@
 ﻿
 data _null_;
 	call symput("outfilex",
-		"\\mktg-app01\E\Production\Audits\FBXCC AUDIT - 21.06_01 - Final Mail File.xlsx");
+		"\\mktg-app01\E\Production\Audits\FBXCC JQ AUDIT - 21.08_02 - Final Mail File.xlsx");
 	call symput("importfile",
-		"WORK.'022091A_RMC_FB_XS_LC_Final_Mailf'n;");
+		"WORK.'31342108.m02.prod.return.final.m'n;");
 run;
 
 data auditfbxcc;

@@ -14,7 +14,7 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20210527FINAL_HH"); 
+		"WORK.FBXS_CC_20210825FINAL_JQ"); 
 		
 run;
 
@@ -24,6 +24,8 @@ data FINAL_HH;
 	if length(SSN) lt 7 then SSN = cats(repeat('0',7-1-length(SSN)),SSN);
     IF CAMP_TYPE = "XS" AND orig_amtid = 662
 		THEN DELETE;
+	
+
 run;
 
 /*
@@ -225,6 +227,14 @@ DATA FINAL_HH;
 	END;
 
 RUN;
+/*
+**** This is done on 7/14/21 to change in the test file  ;
+data FINAL_HH;
+set FINAL_HH;
+length campaign_id $ 20.;
+if campaign_id='&RETAIL_ID' then campaign_id='RetailXS_08.1_2021';
+	if campaign_id='&FB_ID' then campaign_id='FB_08.1_2021CC';
+	run;*/
 
 /*
 
@@ -251,7 +261,7 @@ QUIT;
 RUN;
 
 PROC EXPORT DATA=FINAL_HH_TEST 
-OUTFILE ="\\mktg-app01\E\Production\2021\07_July_2021\FBXSCC\FBXS_CC_20210527FINAL_HH_TEST.txt"
+OUTFILE ="\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\FBXS_CC_20210825FINAL_JQ_TEST.txt"
 DBMS = TAB REPLACE;
 RUN;
 /*

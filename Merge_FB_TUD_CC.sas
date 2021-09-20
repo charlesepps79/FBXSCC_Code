@@ -1,9 +1,12 @@
-﻿%LET FINAL_FB_HH_IMPORT = 
-"\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBXS_CC_20200225FINAL_HH.txt";
+﻿/*
+%LET FINAL_FB_HH_IMPORT = 
+"\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\WORK.FBXS_CC_20210825FINAL_JQ_TEST.txt";
 %LET FINAL_MO_HH_IMPORT = 
-"\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\MOCC_20200225FINAL_HH.txt";
+"\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\WORK.MOCC_20210825FINAL_JQ.txt";
+*/
+
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2020\03_March_2020\FBXSCC\FBMO_CC_20200225FINAL_HH_TEST.txt";
+"\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\FBMO_CC_20210825FINAL_JQ_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -13,12 +16,12 @@
 
 data _null_;
 	call symput("importFB",
-		"WORK.FBXS_CC_20200225FINAL_HH_TEST");
+		"WORK.FBXS_CC_20210825FINAL_JQ_TEST");
 run;
 
 data _null_;
 	call symput("importMO",
-		"WORK.MOCC_20200225FINAL_HH");
+		"WORK.MOCC_20210825FINAL_JQ");
 run;
 
 data FINAL_FB_HH;
