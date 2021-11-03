@@ -1,12 +1,12 @@
 ﻿/*
 %LET FINAL_FB_HH_IMPORT = 
-"\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\WORK.FBXS_CC_20210825FINAL_JQ_TEST.txt";
+"\\mktg-app01\E\Production\2021\10_October_2021\FBXSCC\WORK.FBXS_CC_20210920FINAL_JQ_TEST.txt";
 %LET FINAL_MO_HH_IMPORT = 
-"\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\WORK.MOCC_20210825FINAL_JQ.txt";
+"\\mktg-app01\E\Production\2021\10_October_2021\FBXSCC\WORK.MOCC_20210920FINAL_JQ.txt";
 */
 
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\FBMO_CC_20210825FINAL_JQ_TEST.txt";
+"\\mktg-app01\E\Production\2021\11_November_2021\FBXSCC\FBMO_CC_20211011FINAL_JQ_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -16,12 +16,12 @@
 
 data _null_;
 	call symput("importFB",
-		"WORK.FBXS_CC_20210825FINAL_JQ_TEST");
+		"WORK.FBXS_CC_20211011FINAL_JQ_TEST");
 run;
 
 data _null_;
 	call symput("importMO",
-		"WORK.MOCC_20210825FINAL_JQ");
+		"WORK.MOCC_20211011FINAL_JQ");
 run;
 
 data FINAL_FB_HH;
@@ -48,7 +48,7 @@ PROC SQL;
 		   n_60_dpd, ConProfile, BrAcctNo, cifno, campaign_id, mgc,
 		   month_split, Made_Unmade, fico_range_25pt, state1, 
 		   test_code, POffDate, Phone, CellPhone, suffix/*, RECENTPYOUT, 
-		   CAD_OFFER*/
+		   CAD_OFFER*/, FOOTPRNT, STATE_MISMATCH_FLAG
 	FROM FINAL_HH;
 QUIT;
 RUN;

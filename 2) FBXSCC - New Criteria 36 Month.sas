@@ -59,9 +59,9 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_09.1_2021');
- 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_09.1_2021');
-	CALL SYMPUT ('FB_ID', 'FB_09.1_2021CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_11.1_2021');
+ 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_11.1_2021');
+	CALL SYMPUT ('FB_ID', 'FB_11.1_2021CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
 	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
@@ -69,21 +69,21 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\FBXS_CC_20210825FLAGGED.txt');
+		'\\mktg-app01\E\Production\2021\11_November_2021\FBXSCC\FBXS_CC_20211011FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\FBXS_CC_20210825FINAL.txt');
+		'\\mktg-app01\E\Production\2021\11_November_2021\FBXSCC\FBXS_CC_20211011FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20210825.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20211011.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\FBXS_CC_20210825FINAL_JQ.cSv');
+		'\\mktg-app01\E\Production\2021\11_November_2021\FBXSCC\FBXS_CC_20211011FINAL_JQ.csv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\FBXS_CC_20210825FINAL_JQ.txt');
+		'\\mktg-app01\E\Production\2021\11_November_2021\FBXSCC\FBXS_CC_20211011FINAL_JQ.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2021\09_September_2021\FBXSCC\XS_Mail_Pull.xlsx" 
+		"\\mktg-app01\E\Production\2021\11_November_2021\FBXSCC\XS_Mail_Pull.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -211,7 +211,7 @@ DATA XS_L;
 		BNKRPTDATE = "" & 
 		CLASSID IN (10,19,20,31,34) & 
 		OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX", "VA", 
-				  "MO", "WI");
+				  "MO", "WI", "IL");
 	
 	*** CREATE `SS7BRSTATE` VARIABLE ----------------------------- ***;
 	SS7BRSTATE = CATS(SSNO1_RT7, SUBSTR(OWNBR, 1, 2)); 
@@ -408,10 +408,10 @@ DATA XS_TOTAL;
 		THEN OFFER_SEGMENT = "ITA";
 	IF STATE IN ("GA", "VA") 
 		THEN OFFER_SEGMENT = "ITA";
-	IF STATE IN ("SC","TX","TN","AL","OK","NM", "MO", "WI") & 
+	IF STATE IN ("SC","TX","TN","AL","OK","NM", "MO", "WI", "IL") & 
 	   SOURCE_2 = "AUTO" 
 		THEN OFFER_SEGMENT = "ITA";
-	IF STATE IN ("SC","NC","TX","TN","AL","OK","NM", "MO", "WI") & 
+	IF STATE IN ("SC","NC","TX","TN","AL","OK","NM", "MO", "WI", "IL") & 
 	   SOURCE_2 = "RETAIL" & 
 	   RISK_SEGMENT = "624 AND BELOW" 
 		THEN OFFER_SEGMENT = "ITA";
@@ -436,7 +436,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 	WHERE POFFDATE BETWEEN "&_36MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
-					"VA", "MO", "WI"); /* PAID OUT LOANS */
+					"VA", "MO", "WI", "IL"); /* PAID OUT LOANS */
 	SS7BRSTATE = CATS(SSNO1_RT7, SUBSTR(OWNBR, 1, 2));
 	LOANDATE_SAS = INPUT(STRIP('LOANDATE'n), yymmdd10.);
 	FORMAT LOANDATE_SAS yymmdd10.;
@@ -947,7 +947,7 @@ DATA MERGED_L_B2;
 	
 	*** FIND STATES OUTSIDE OF FOOTPRINT ------------------------- ***;
 	IF STATE NOT IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX", 
-					 "VA", "MO", "WI") THEN OOS_FLAG = "X";
+					 "VA", "MO", "WI", "IL") THEN OOS_FLAG = "X";
 	
 	*** FLAG CONFIDENTIAL ---------------------------------------- ***;
 	IF CONFIDENTIAL = "Y" THEN DNS_DNH_FLAG = "X"; 
@@ -1474,6 +1474,8 @@ DATA MERGED_L_B2; /* FLAG FOR BAD DLQATB */
  	IF TIMES30 = "." AND CAMP_TYPE = "FB" THEN DLQ_FLAG = "X"; 
  /* IF OWNBR = "0537" THEN HARVEY = "BEAUMONT DROP"; */
  /* IF BRNO ="0537" THEN HARVEY="BEAUMONT DROP";*/
+	IF SSNO1 =: "99" THEN BADSSN_FLAG = "X"; /* FLAG BAD SSNS */
+	IF SSNO1 =: "98" THEN BADSSN_FLAG = "X"; /* FLAG BAD SSNS */
 RUN;
 
 PROC SORT 
@@ -1840,7 +1842,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20210825.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20211011.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1918,7 +1920,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_9_FBCC_20210825.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_10_FBCC_20211011.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -2000,6 +2002,7 @@ DATA FINALHH1;
 		IF LNAMT >= 1500 & TIMES30 NE 0 THEN RISK_SEGMENT = "A and B";
 		IF LNAMT < 1500 THEN RISK_SEGMENT = "A and B";
 		IF OWNST = "TX" AND 
+		   STATE = "TX" AND
 		   SERCHG = 100 AND 
 		   TILA_LNAMT > 1380 AND 
 		   MOS_ON_BOOKS < 12 THEN RISK_SEGMENT = "AT";
@@ -2107,7 +2110,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20210802.xlsx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20211008.xlsx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
