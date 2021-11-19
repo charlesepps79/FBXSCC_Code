@@ -59,25 +59,25 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_11.2_2021');
- 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_11.2_2021');
-	CALL SYMPUT ('FB_ID', 'FB_11.2_2021CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_12.1_2021');
+ 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_12.1_2021');
+	CALL SYMPUT ('FB_ID', 'FB_12.1_2021CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
+	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211103FLAGGED.txt');
+		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211103FINAL.txt');
+		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20211103.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20211119.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211103FINAL_JQ.csv');
+		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FINAL_JQ.csv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211103FINAL_JQ.txt');
+		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FINAL_JQ.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
@@ -1842,7 +1842,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20211103.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20211119.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1920,7 +1920,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_10_FBCC_20211103.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_10_FBCC_20211119.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -1952,6 +1952,9 @@ DATA FINALHH;
 	MERGE FBCCFINAL(IN = x) MLA1;
 	BY BRACCTNO;
 	IF x;
+	MLA_APPROVED = "N";
+	IF MLA_STATUS = "N" THEN MLA_APPROVED = "Y";
+	IF MLA_STATUS = "Y" AND STATE = "IL" THEN MLA_APPROVED = "Y";
 	RENAME CRSCORE = FICO;
 RUN;
 
@@ -1965,7 +1968,7 @@ DATA FINALHH1;
 	LENGTH FICO_RANGE_25PT $10 CAMPAIGN_ID $25 MADE_UNMADE $15
 		   CIFNO $20 CUSTID $20 MGC $20 STATE1 $5 TEST_CODE $20;
 	SET FINALHH;
-	IF MLA_STATUS = "N";
+	IF MLA_APPROVED = "Y";
 	IF FICO = 0 THEN FICO_RANGE_25PT = "0";
 	IF 0 < FICO < 500 THEN FICO_RANGE_25PT = "<500";
 	IF 500 <= FICO <= 524 THEN FICO_RANGE_25PT = "500-524";
@@ -2110,7 +2113,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20211008.xlsx" /*"Change02252020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20211118.xlsx" /*"Change02252020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -2152,6 +2155,7 @@ DATA FINALHH4;
 	IF STATE_MISMATCH_FLAG = 'X' THEN BRANCH = '';
 	FORMAT AMT_GIVEN1 DOllar10.2;
 	*FORMAT CAD_OFFER DOllar10.2;
+	
 	RENAME APR = PERCENT;
 RUN;
 
