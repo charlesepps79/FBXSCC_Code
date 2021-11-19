@@ -1,9 +1,9 @@
 ﻿
 data _null_;
 	call symput("outfilex",
-		"\\mktg-app01\E\Production\Audits\FBXCC JQ AUDIT - 21.10_01 - Final Mail File.xlsx");
+		"\\mktg-app01\E\Production\Audits\FBXCC JQ AUDIT - 21.11_02 - Final Mail File.xlsx");
 	call symput("importfile",
-		"WORK.'31342110.m01.prod.return.final.m'n;");
+		"WORK.'31342112.m01.prod.return.final.m'n;");
 run;
 
 data auditfbxcc;
@@ -19,18 +19,23 @@ data checkinfo1;
 	infile datalines delimiter = ",";
 	input state $ acctnum_x;
 	datalines;
-AL, 8018011620,
-GA, 8018012941,
-NC, 2079900553369,
-NM, 8018011588,
-OK, 8018011604,
-SC, 2079900585175,
-TN, 2079900552962,
-TX, 2079900585188,
-VA, 8018017353,
-MO, 8018498710,
-WI, 8018504632,
-IL, 8018245293
+AL, 7482178410,
+TN, 7482178428,
+GA, 7482178576,
+MS, 7482178543,
+MO, 7482178550,
+NM, 7482178568,
+NC, 7482178535,
+OK, 7482178600,
+SC, 7482178527,
+TX, 7482178519,
+VA, 7482178618,
+WI, 7482178501,
+IL, 7482178584,
+IN, 7482178592,
+UT, 7482178626,
+CA, 7482241036,
+KY, 7482241044
 ;
 run;
 
