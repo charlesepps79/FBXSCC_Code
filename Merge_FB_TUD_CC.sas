@@ -1,12 +1,12 @@
 ﻿/*
 %LET FINAL_FB_HH_IMPORT = 
-"\\mktg-app01\E\Production\2021\10_October_2021\FBXSCC\WORK.FBXS_CC_20210920FINAL_JQ_TEST.txt";
+"\\mktg-app01\E\Production\2021\10_October_2021\FBXSCC\WORK.FBXS_CC_20211210FINAL_JQ_TEST.txt";
 %LET FINAL_MO_HH_IMPORT = 
-"\\mktg-app01\E\Production\2021\10_October_2021\FBXSCC\WORK.MOCC_20210920FINAL_JQ.txt";
+"\\mktg-app01\E\Production\2021\10_October_2021\FBXSCC\WORK.MOCC_20211210FINAL_JQ.txt";
 */
 
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBMO_CC_20211119FINAL_JQ_TEST.txt";
+"\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\FBMO_CC_20220110FINAL_JQ_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -16,12 +16,12 @@
 
 data _null_;
 	call symput("importFB",
-		"WORK.FBXS_CC_20211119FINAL_JQ_TEST");
+		"WORK.FBXS_CC_20220110FINAL_JQ_TE_0005");
 run;
 
 data _null_;
 	call symput("importMO",
-		"WORK.MOCC_20211119FINAL_JQ");
+		"WORK.MOCC_20220110FINAL_JQ_0006");
 run;
 
 data FINAL_FB_HH;
@@ -45,6 +45,12 @@ DATA FINAL_HH;
 	LENGTH CUSTID$20;
 	SET FINAL_HH1;
 	CUSTID = STRIP(_N_);
+RUN;
+
+*** REMOVE RECORDS WITH DUPLICATE `CIFNO` FROM `XS_LDEDUPED` ----- ***;
+PROC SORT 
+	DATA = FINAL_HH NODUPKEY; 
+	BY BrAcctNo CIFNO; 
 RUN;
 
 PROC SQL;

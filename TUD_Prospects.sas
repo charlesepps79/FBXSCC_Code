@@ -16,20 +16,20 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('TUD_ID', 'MOCC_12.1_2021');
+	CALL SYMPUT ('TUD_ID', 'MOCC_02.1_2022');
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\MOCC_20211119FLAGGED.txt');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\MOCC_20220110FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\MOCC_20211119FINAL.txt');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\MOCC_20220110FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20211119.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20220110.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\MOCC_20211119FINAL_JQ.cSv');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\MOCC_20220110FINAL_JQ.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\MOCC_20211119FINAL_JQ.txt');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\MOCC_20220110FINAL_JQ.txt');
 RUN;
 
 ***30 days from one week ago***;
@@ -48,7 +48,7 @@ Proc SQL;
 		   A.street_address1, A.city, A.zip, A.ssn, A.dob
 	FROM DW.vw_AppData A
 	where A.ApplicationEnterDateOnly BETWEEN 
-		  '2021-10-13' AND '2021-11-18';
+		  '2021-12-04' AND '2022-01-03';
 RUN;
 
 PROC SORT;  
@@ -164,11 +164,11 @@ DATA APPS(
 	ApplicationEnterDate = MDY(APPMM, APPDAY, APPYR);
 
    *IF '30jun2019'd < ApplicationEnterDate < '01aug2019'd;
-	IF '13oct2021'd < ApplicationEnterDate < '12nov2021'd;
+	IF '04dec2021'd < ApplicationEnterDate < '03jan2022'd;
 
 	*** CLEAN UP SOME BAD STATE FORMATS -------------------------- ***;
 	IF STATE IN ('AL' 'OK' 'NM' 'NC' 'GA' 'TN' 'MO' 'WI' 'SC' 'TX' 'VA' 
-				 'WI' 'IL') 
+				 'WI' 'IL' 'UT') 
 		THEN STATE = STATE;  
 	ELSE DO;
   		IF STATE IN ('AL.' 'ALA') 
@@ -247,7 +247,7 @@ DATA INELIG;
 	SET APPS;
 	WHERE SUBSTR(REASON, 1, 2) = '9.'; 
 	IF  TotalTradeLines < 2 THEN DELETE;
-	IF DateFiled NE '.' AND DateFiled < '19nov2018'd then delete;
+	IF DateFiled NE '.' AND DateFiled < '01jan2019'd then delete;
 RUN;
 
 DATA FINAL_MOCC;
@@ -344,7 +344,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20211119.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20220110.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -357,7 +357,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_10_MOCC_20211119.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_10_MOCC_20220110.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -395,7 +395,7 @@ DATA FINALHH1;
 	RENAME CreditScore = FICO;
 RUN;
 
-DATA FINAL_HH;
+DATA FINALHH;
 	SET FINALHH1;
 
 	IF CST = 'IL' & MLA_STATUS = 'N' & MLA_APPROVED = 'Y'
@@ -502,6 +502,7 @@ DATA FINALHH1;
 	IF x;
 	*IF customerelig = "" THEN DELETE;
 	*IF OPEN_FLAG = "X" THEN DELETE;
+	DROP STATE1 SSN;
 RUN;
 
 *** EXPORT FINAL FILE -------------------------------------------- ***;
@@ -515,24 +516,27 @@ RUN;
 
 DATA FINALHH2;
 	SET FINALHH1;
-	RENAME BRANCH = BRANCH
-		   FIRSTNAME = CFNAME1
+	RENAME CD60 = N_60_DPD
+		   city = CCITY
+		   CONPROFILE1 = CONPROFILE
+		   firstname = CFNAME1
+		   lastname = CLNAME1
 		   MIDDLENAME = CMNAME1
-		   LASTNAME = CLNAME1
-		   street_address1 = CADDR1 
-		   CADDR2 = CADDR2
-		   city = CCITY 
-		   state = CST 
-		   zip = CZIP 
-		   SSNO1_RT7 = SSN 
-		   CD60 = N_60_DPD 
-		   CONPROFILE1 = CONPROFILE;
+		   SSNO1_RT7 = SSN
+		   street_address1 = CADDR1
+		   zip = CZIP;
+		   STATE1 = CST;
 		   CELLPHONE = '';
 		   MONTH_SPLIT = '';
 		   PHONE = '';
 		   POFFDATE = '';
 		   SUFFIX = '';
 		   IF OPEN_FLAG = "X" THEN DELETE;
+RUN;
+
+PROC SORT 
+	DATA = FINALHH2 NODUPKEY;
+	BY SSNO1;
 RUN;
 
 *** IF RISK_SEGMENT = "TEST" THEN TEST_CODE = "RATE_TEST"          ***;

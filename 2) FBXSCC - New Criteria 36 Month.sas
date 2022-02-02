@@ -59,9 +59,9 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_12.1_2021');
- 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_12.1_2021');
-	CALL SYMPUT ('FB_ID', 'FB_12.1_2021CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_02.1_2022');
+ 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_02.1_2022');
+	CALL SYMPUT ('FB_ID', 'FB_02.1_2022CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
 	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
@@ -69,21 +69,21 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FLAGGED.txt');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\FBXS_CC_20220107FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FINAL.txt');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\FBXS_CC_20220107FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20211119.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20220107.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FINAL_JQ.csv');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\FBXS_CC_20220107FINAL_JQ.csv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\FBXS_CC_20211119FINAL_JQ.txt');
+		'\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\FBXS_CC_20220107FINAL_JQ.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2021\12_December_2021\FBXSCC\XS_Mail_Pull.xlsx" 
+		"\\mktg-app01\E\Production\2022\02_February_2022\FBXSCC\XS_Mail_Pull.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -211,7 +211,7 @@ DATA XS_L;
 		BNKRPTDATE = "" & 
 		CLASSID IN (10,19,20,31,34) & 
 		OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX", "VA", 
-				  "MO", "WI", "IL");
+				  "MO", "WI", "IL", "UT");
 	
 	*** CREATE `SS7BRSTATE` VARIABLE ----------------------------- ***;
 	SS7BRSTATE = CATS(SSNO1_RT7, SUBSTR(OWNBR, 1, 2)); 
@@ -408,10 +408,10 @@ DATA XS_TOTAL;
 		THEN OFFER_SEGMENT = "ITA";
 	IF STATE IN ("GA", "VA") 
 		THEN OFFER_SEGMENT = "ITA";
-	IF STATE IN ("SC","TX","TN","AL","OK","NM", "MO", "WI", "IL") & 
+	IF STATE IN ("SC","TX","TN","AL","OK","NM", "MO", "WI", "IL", "UT") & 
 	   SOURCE_2 = "AUTO" 
 		THEN OFFER_SEGMENT = "ITA";
-	IF STATE IN ("SC","NC","TX","TN","AL","OK","NM", "MO", "WI", "IL") & 
+	IF STATE IN ("SC","NC","TX","TN","AL","OK","NM", "MO", "WI", "IL", "UT") & 
 	   SOURCE_2 = "RETAIL" & 
 	   RISK_SEGMENT = "624 AND BELOW" 
 		THEN OFFER_SEGMENT = "ITA";
@@ -436,7 +436,7 @@ DATA LOAN_PULL; /* FROM LOAN TABLE FOR FB */
 	WHERE POFFDATE BETWEEN "&_36MONTH" AND "&_1DAY" & 
 		  POCD = "13" & 
 		  OWNST IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX",
-					"VA", "MO", "WI", "IL"); /* PAID OUT LOANS */
+					"VA", "MO", "WI", "IL", "UT"); /* PAID OUT LOANS */
 	SS7BRSTATE = CATS(SSNO1_RT7, SUBSTR(OWNBR, 1, 2));
 	LOANDATE_SAS = INPUT(STRIP('LOANDATE'n), yymmdd10.);
 	FORMAT LOANDATE_SAS yymmdd10.;
@@ -947,7 +947,7 @@ DATA MERGED_L_B2;
 	
 	*** FIND STATES OUTSIDE OF FOOTPRINT ------------------------- ***;
 	IF STATE NOT IN ("AL", "GA", "NC", "NM", "OK", "SC", "TN", "TX", 
-					 "VA", "MO", "WI", "IL") THEN OOS_FLAG = "X";
+					 "VA", "MO", "WI", "IL", "UT") THEN OOS_FLAG = "X";
 	
 	*** FLAG CONFIDENTIAL ---------------------------------------- ***;
 	IF CONFIDENTIAL = "Y" THEN DNS_DNH_FLAG = "X"; 
@@ -1470,6 +1470,7 @@ DATA MERGED_L_B2; /* FLAG FOR BAD DLQATB */
 	*IF TIMES30 = "." THEN TIMES30 = 0;
 	IF RECENT3 > 1 OR RECENT6 >2 OR LAST12 > 3 OR LAST12_60 > 1 OR 
 	   RECENT6_60 > 0 THEN DLQ_FLAG = "X";
+	IF LAST12_60 > 2 OR RECENT6_60 > 1 THEN NEW_DLQ_FLAG = "X";
 	IF CAMP_TYPE = "XS" & LAST12_60 > 0 THEN DLQ_FLAG = "X";
  	IF TIMES30 = "." AND CAMP_TYPE = "FB" THEN DLQ_FLAG = "X"; 
  /* IF OWNBR = "0537" THEN HARVEY = "BEAUMONT DROP"; */
@@ -1842,7 +1843,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20211119.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20211210.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1920,7 +1921,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_10_FBCC_20211119.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_10_FBCC_20211210.txt";
 
 DATA MLA1;
 	INFILE MLA1;
