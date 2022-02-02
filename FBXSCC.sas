@@ -1986,7 +1986,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20191030.xlSx" /*"Change01092020"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20211118.xlSx" /*"Change01092020"*/ 
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -2012,6 +2012,16 @@ DATA FINALHH4;
 	FORMAT AMT_GIVEN1 DOllar10.2;
 	RENAME APR = PERCENT;
 RUN;
+
+
+
+
+PROC SURVEYSELECT 
+	DATA = FINALHH4 SAMPRATE = 0.50 SEED = 3617 
+		OUT = TEST_SAMPLE OUTALL METHOD = SRS NOPRINT;
+	STRATA ClassTranslation;
+RUN;
+
 
 *** IF RISK_SEGMENT = "TEST" THEN TEST_CODE = "RATE_TEST"          ***;
 *** ELSE TEST_CODE = "Control" ----------------------------------- ***;
