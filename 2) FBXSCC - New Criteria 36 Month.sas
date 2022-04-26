@@ -2049,10 +2049,6 @@ DATA FINALHH2;
 	IF CIFNO_MATCH > 0 AND CAMP_TYPE NE "XS" AND STATE="TX" THEN RISK_SEGMENT = "AT";
 RUN;
 
-**********************************************************************;
-********************************TEST**********************************;
-**********************************************************************;
-
 data partial;
 	SET DW.VW_PAYMENT(
 		keep = TRCD BRACCTNO);
@@ -2096,8 +2092,68 @@ RUN;
 ********************************TEST**********************************;
 **********************************************************************;
 
-DATA FINALHH2;
+DATA FINALHH4;
 	SET FINALHH3;
+	IF POffDate NOT = "" AND
+	POffDate <= "&_12MONTH" AND 
+		TIMES30 <= 1
+	THEN LL_Eligible = "X";
+RUN;
+
+PROC SORT
+	DATA = FINALHH4;
+	BY LL_Eligible;
+RUN;
+
+PROC SURVEYSELECT
+	DATA = FINALHH4 SAMPRATE = 0.50 SEED = 3617
+	OUT = TEST_SAMPLE OUTALL METHOD = SRS NOPRINT;
+	STRATA LL_Eligible;
+RUN;
+
+DATA FINALHH5;
+	SET TEST_SAMPLE;
+       		
+	IF Selected = 1 &
+		LL_Eligible = "X" &
+		ClassTranslation = "Large" &
+		Camp_Type = "FB" &
+		OwnSt IN ("AL", "GA", "NC", "NM", "SC", "TN", "TX", "VA", "MO", 
+				  "WI", "IL", "UT")
+	THEN Risk_Segment = 'AAA';
+
+	IF Selected = 1 &
+		LL_Eligible = "X" &
+		ClassTranslation NOT = "Large" &
+		Camp_Type = "FB" &
+		OwnSt IN ("AL", "GA", "NC", "NM", "SC", "TN", "TX", "VA", "MO",
+				  "WI", "IL", "UT")
+	THEN Risk_Segment = 'AA';
+
+	IF Selected = 1 &
+		LL_Eligible = "X" &
+		ClassTranslation NOT = "Large" &
+		Camp_Type = "FB" &
+		OwnSt IN ("IL") &
+		MLA_APPROVED = "Y"
+	THEN Risk_Segment = 'AA MLA';
+
+	IF Selected = 1 &
+		LL_Eligible = "X" &
+		ClassTranslation = "Large" &
+		Camp_Type = "FB" &
+		OwnSt IN ("IL") &
+		MLA_APPROVED = "Y"
+	THEN Risk_Segment = 'AAA MLA';
+
+RUN;
+
+**********************************************************************;
+********************************TEST**********************************;
+**********************************************************************;
+
+DATA FINALHH2;
+	SET FINALHH5;
 	RENAME OWNBR = BRANCH
 		   FIRSTNAME = CFNAME1
 		   MIDDLENAME = CMNAME1
