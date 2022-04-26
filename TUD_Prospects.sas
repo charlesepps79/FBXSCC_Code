@@ -21,15 +21,15 @@ DATA
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_1\MOCC_20220426FLAGGED.txt');
+		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_2\MOCC_20220426FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_1\MOCC_20220426FINAL.txt');
+		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_2\MOCC_20220426FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
 		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20220426.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_1\MOCC_20220426FINAL_JQ.cSv');
+		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_2\MOCC_20220426FINAL_JQ.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_1\MOCC_20220426FINAL_JQ.txt');
+		'\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_2\MOCC_20220426FINAL_JQ.txt');
 RUN;
 
 ***30 days from one week ago***;
