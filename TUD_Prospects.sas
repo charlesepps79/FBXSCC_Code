@@ -16,20 +16,20 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('TUD_ID', 'MOCC_03.1_2022');
+	CALL SYMPUT ('TUD_ID', 'MOCC_04.1_2022');
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2022\03_March_2022\FBXSCC\MOCC_20220222FLAGGED.txt');
+		'\\mktg-app01\E\Production\2022\04_April_2022\FBXSCC\MOCC_20220321FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2022\03_March_2022\FBXSCC\MOCC_20220222FINAL.txt');
+		'\\mktg-app01\E\Production\2022\04_April_2022\FBXSCC\MOCC_20220321FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20220222.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\MOCC_20220321.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2022\03_March_2022\FBXSCC\MOCC_20220222FINAL_JQ.cSv');
+		'\\mktg-app01\E\Production\2022\04_April_2022\FBXSCC\MOCC_20220321FINAL_JQ.cSv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2022\03_March_2022\FBXSCC\MOCC_20220222FINAL_JQ.txt');
+		'\\mktg-app01\E\Production\2022\04_April_2022\FBXSCC\MOCC_20220321FINAL_JQ.txt');
 RUN;
 
 ***30 days from one week ago***;
@@ -48,7 +48,7 @@ Proc SQL;
 		   A.street_address1, A.city, A.zip, A.ssn, A.dob
 	FROM DW.vw_AppData A
 	where A.ApplicationEnterDateOnly BETWEEN 
-		  '2022-01-15' AND '2022-02-22';
+		  '2022-02-12' AND '2022-03-21';
 RUN;
 
 PROC SORT;  
@@ -164,7 +164,7 @@ DATA APPS(
 	ApplicationEnterDate = MDY(APPMM, APPDAY, APPYR);
 
    *IF '30jun2019'd < ApplicationEnterDate < '01aug2019'd;
-	IF '15jan2022'd < ApplicationEnterDate < '22feb2022'd;
+	IF '12feb2022'd < ApplicationEnterDate < '21mar2022'd;
 
 	*** CLEAN UP SOME BAD STATE FORMATS -------------------------- ***;
 	IF STATE IN ('AL' 'OK' 'NM' 'NC' 'GA' 'TN' 'MO' 'WI' 'SC' 'TX' 'VA' 
@@ -247,7 +247,7 @@ DATA INELIG;
 	SET APPS;
 	WHERE SUBSTR(REASON, 1, 2) = '9.'; 
 	IF  TotalTradeLines < 2 THEN DELETE;
-	IF DateFiled NE '.' AND DateFiled < '22feb2019'd then delete;
+	IF DateFiled NE '.' AND DateFiled < '21mar2019'd then delete;
 RUN;
 
 DATA FINAL_MOCC;
@@ -265,7 +265,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20220131.xlSx" /*Change 02222022*/
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20220317.xlSx" /*Change 03212022*/
 	DBMS = EXCEL OUT = OFFERS REPLACE; 
 RUN;
 
@@ -344,7 +344,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20220222.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\MOCC_20220321.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -357,7 +357,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_11_MOCC_20220222.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_11_MOCC_20220321.txt";
 
 DATA MLA1;
 	INFILE MLA1;
