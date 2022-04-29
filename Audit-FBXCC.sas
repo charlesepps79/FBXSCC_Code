@@ -1,9 +1,9 @@
 ﻿
 data _null_;
 	call symput("outfilex",
-		"\\mktg-app01\E\Production\Audits\FBXCC JQ AUDIT - 22.03_01 - Final Mail File.xlsx");
+		"\\mktg-app01\E\Production\Audits\FBXCC JQ AUDIT - 22.05_01 - Final Mail File.xlsx");
 	call symput("importfile",
-		"WORK.'31342203.m01.prod.return.final.m'n;");
+		"WORK.'31342204.m02.prod.return.final.m'n;");
 run;
 
 data auditfbxcc;
@@ -102,7 +102,7 @@ run;
 
 proc import 
 	datafile = "\\mktg-app01\E\Production\Master Files and Instructions\AMTID Master.xlsx" 
-	dbms = excel 
+	dbms = xlsx 
 	out = amtids 
 	replace;
 run;
