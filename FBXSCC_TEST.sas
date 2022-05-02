@@ -14,7 +14,7 @@
 
 data _null_;
 	call symput("importfile",
-		"WORK.FBXS_CC_20220426FINAL_JQ_0001"); 
+		"WORK.FBXS_CC_20220429FINAL_JQ"); 
 		
 run;
 
@@ -262,7 +262,7 @@ QUIT;
 RUN;
 
 PROC EXPORT DATA=FINAL_HH_TEST 
-OUTFILE ="\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\Test_2\FBXS_CC_20220426FINAL_JQ_TEST.txt"
+OUTFILE ="\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\FBXS_CC_20220429FINAL_JQ_TEST.txt"
 DBMS = TAB REPLACE;
 RUN;
 /*
