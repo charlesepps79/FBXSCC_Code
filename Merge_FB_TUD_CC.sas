@@ -6,7 +6,7 @@
 */
 
 %LET FINAL_EXPORT_HH = 
-"\\mktg-app01\E\Production\2022\05_May_2022\FBXSCC\5.2\FBMO_CC_20220429FINAL_JQ_TEST.txt";
+"\\mktg-app01\E\Production\2022\06_June_2022\FBXSCC\FBMO_CC_20220520FINAL_JQ_TEST.txt";
 
 %LET VARLIST = branch $4 cfname1 $16 cmname1 $14 clname1 $22 caddr1 $40
 			   caddr2 $40 ccity $25 cst $3 czip $10 ssn $7 camp_type $2
@@ -16,12 +16,12 @@
 
 data _null_;
 	call symput("importFB",
-		"WORK.FBXS_CC_20220429FINAL_JQ_TEST");
+		"WORK.FBXS_CC_20220520FINAL_JQ_TEST");
 run;
 
 data _null_;
 	call symput("importMO",
-		"WORK.MOCC_20220429FINAL_JQ");
+		"WORK.MOCC_20220520FINAL_JQ");
 run;
 
 data FINAL_FB_HH;
