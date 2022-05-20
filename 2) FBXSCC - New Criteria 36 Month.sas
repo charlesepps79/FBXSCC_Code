@@ -39,6 +39,10 @@
 %LET _36MONTH = %SYSFUNC(putn(&_36MONTH_NUM,yymmdd10.));
 %PUT "&_36MONTH";
 
+%LET _12MONTH_NUM = %EVAL(%SYSFUNC(inputn(&pulldate,yymmdd10.))-365);
+%LET _12MONTH = %SYSFUNC(putn(&_12MONTH_NUM,yymmdd10.));
+%PUT "&_12MONTH";
+
 %PUT "&_1DAY" "&_1MONTH" "&_30MONTH" "&_3YR" "&_5YR" "&_15MONTH" 
 	 "&_18MONTH";
 
