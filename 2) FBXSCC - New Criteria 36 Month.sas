@@ -63,31 +63,31 @@ DATA
 	_NULL_;
 
 	*** ASSIGN ID MACRO VARIABLES -------------------------------- ***;
-	CALL SYMPUT ('RETAIL_ID', 'RetailXS_06.1_2022');
- 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_06.1_2022');
-	CALL SYMPUT ('FB_ID', 'FB_06.1_2022CC');
+	CALL SYMPUT ('RETAIL_ID', 'RetailXS_07.1_2022');
+ 	CALL SYMPUT ('AUTO_ID', 'AUTOXS_07.1_2022');
+	CALL SYMPUT ('FB_ID', 'FB_07.1_2022CC');
 
 	*** ASSIGN ODD/EVEN MACRO VARIABLE --------------------------- ***;
-	CALL SYMPUT ('ODD_EVEN', 'ODD'); 
+	CALL SYMPUT ('ODD_EVEN', 'EVEN'); 
 
 	*** ASSIGN DATA FILE MACRO VARIABLE -------------------------- ***;
 	
 	CALL SYMPUT ('FINALEXPORTFLAGGED', 
-		'\\mktg-app01\E\Production\2022\06_June_2022\FBXSCC\FBXS_CC_20220520FLAGGED.txt');
+		'\\mktg-app01\E\Production\2022\07_July_2022\FBXSCC\FBXS_CC_20220614FLAGGED.txt');
 	CALL SYMPUT ('FINALEXPORTDROPPED', 
-		'\\mktg-app01\E\Production\2022\06_June_2022\FBXSCC\FBXS_CC_20220520FINAL.txt');
+		'\\mktg-app01\E\Production\2022\07_July_2022\FBXSCC\FBXS_CC_20220614FINAL.txt');
 	CALL SYMPUT ('EXPORTMLA', 
-		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20220520.txt');
+		'\\mktg-app01\E\Production\MLA\MLA-INPUT FILES TO WEBSITE\FBCC_20220614.txt');
 	CALL SYMPUT ('FINALEXPORTED', 
-		'\\mktg-app01\E\Production\2022\06_June_2022\FBXSCC\FBXS_CC_20220520FINAL_JQ.csv');
+		'\\mktg-app01\E\Production\2022\07_July_2022\FBXSCC\FBXS_CC_20220614FINAL_JQ.csv');
 	CALL SYMPUT ('FINALEXPORTHH', 
-		'\\mktg-app01\E\Production\2022\06_June_2022\FBXSCC\FBXS_CC_20220520FINAL_JQ.txt');
+		'\\mktg-app01\E\Production\2022\07_July_2022\FBXSCC\FBXS_CC_20220614FINAL_JQ.txt');
 RUN;
 
 *** NEW TCI DATA - RETAIL AND AUTO ------------------------------- ***;
 PROC IMPORT 
 	DATAFILE = 
-		"\\mktg-app01\E\Production\2022\06_June_2022\FBXSCC\XS_Mail_Pull.xlsx" 
+		"\\mktg-app01\E\Production\2022\07_July_2022\FBXSCC\XS_Mail_Pull.xlsx" 
 		DBMS = XLSX OUT = XS REPLACE;
 	RANGE = "XS Mail PULL$A3:0";
 	GETNAMES = YES;
@@ -1847,7 +1847,7 @@ RUN;
 
 DATA _NULL_;
 	SET FINALMLA;
-	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20220520.txt";
+	FILE "\\mktg-app01\E\Production\MLA\MLA-INput files TO WEBSITE\FBCC_20220614.txt";
 	PUT @ 1 "Social Security Number (SSN)"n 
 		@ 10 "Date of Birth"n 
 		@ 18 "Last NAME"n 
@@ -1925,7 +1925,7 @@ RUN;
 *** STEP 2: WHEN FILE IS RETURNED FROM DOD, RUN CODE BELOW         ***;
 *** DO NOT CHANGE FILE NAME -------------------------------------- ***;
 FILENAME MLA1
-"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_12_FBCC_20220520.txt";
+"\\mktg-app01\E\Production\MLA\MLA-Output files FROM WEBSITE\MLA_5_12_FBCC_20220614.txt";
 
 DATA MLA1;
 	INFILE MLA1;
@@ -2174,7 +2174,7 @@ RUN;
 
 PROC IMPORT 
 	DATAFILE = 
-	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20220428.xlsx" /*"Change05202022"*/ 
+	"\\mktg-app01\E\Production\Master Files and Instructions\FBXSMOCC_Offers -20220614.xlsx" /*"Change06142022"*/ 
 	DBMS = XLSX OUT = OFFERS REPLACE; 
 RUN;
 
